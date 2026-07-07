@@ -5,6 +5,7 @@ import {
   createHasil,
   updateHasilById,
   deleteHasilById,
+  calculateHasil,
 } from "../controllers/hasilController.js";
 
 import { authMiddleware } from "../middlewares/authMiddlewares.js";
@@ -20,5 +21,7 @@ router.post("/", authMiddleware, createHasil);
 router.put("/:id", authMiddleware, updateHasilById);
 
 router.delete("/:id", authMiddleware, deleteHasilById);
+
+router.get("/calculate/:userId", authMiddleware, calculateHasil);
 
 export default router;
