@@ -207,7 +207,7 @@ model Bobot{
 
   bobot_rating Float
 
-  bobot_relevansi Float
+  bobot_level Float
 
   bobot_fasilitas Float
 

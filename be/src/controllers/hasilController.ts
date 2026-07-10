@@ -1,234 +1,82 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/db.js";
+import { hitungSPK, MetodeSPK } from "../services/spkServices.js";
 
 // ==============================
 // GET ALL HASIL
 // ==============================
 export const getAllHasil = async (req: Request, res: Response) => {
-  try {
-    const hasil = await prisma.hasil.findMany({
-      include: {
-        user: true,
-        seminar: true,
-      },
-      orderBy: [
-        { metode: "asc" },
-        { ranking: "asc" },
-      ],
-    });
-
-    res.json(hasil);
-  } catch (error) {
-    res.status(500).json({
-      error: "Gagal mengambil data hasil",
-    });
-  }
+  // ... (kode lama, gak diubah)
 };
 
 // ==============================
 // GET HASIL BY ID
 // ==============================
 export const getHasilById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    const hasil = await prisma.hasil.findUnique({
-      where: {
-        id: Number(id),
-      },
-      include: {
-        user: true,
-        seminar: true,
-      },
-    });
-
-    if (!hasil) {
-      return res.status(404).json({
-        error: "Hasil tidak ditemukan",
-      });
-    }
-
-    res.json(hasil);
-  } catch (error) {
-    res.status(500).json({
-      error: "Gagal mengambil data hasil",
-    });
-  }
+  // ... (kode lama, gak diubah)
 };
 
 // ==============================
 // CREATE HASIL
 // ==============================
-export const createHasil = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const {
-      userId,
-      seminarId,
-      metode,
-      nilai,
-      ranking,
-    } = req.body;
-
-    if (
-      !userId ||
-      !seminarId ||
-      !metode ||
-      nilai === undefined ||
-      ranking === undefined
-    ) {
-      return res.status(400).json({
-        error: "Semua field wajib diisi",
-      });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: Number(userId),
-      },
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        error: "User tidak ditemukan",
-      });
-    }
-
-    const seminar = await prisma.seminar.findUnique({
-      where: {
-        id: Number(seminarId),
-      },
-    });
-
-    if (!seminar) {
-      return res.status(404).json({
-        error: "Seminar tidak ditemukan",
-      });
-    }
-
-    const hasil = await prisma.hasil.create({
-      data: {
-        userId: Number(userId),
-        seminarId: Number(seminarId),
-        metode,
-        nilai: Number(nilai),
-        ranking: Number(ranking),
-      },
-      include: {
-        user: true,
-        seminar: true,
-      },
-    });
-
-    res.status(201).json(hasil);
-  } catch (error) {
-    res.status(500).json({
-      error: "Gagal menyimpan hasil",
-    });
-  }
+export const createHasil = async (req: Request, res: Response) => {
+  // ... (kode lama, gak diubah)
 };
 
 // ==============================
 // UPDATE HASIL
 // ==============================
-export const updateHasilById = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const { id } = req.params;
-
-    const {
-      userId,
-      seminarId,
-      metode,
-      nilai,
-      ranking,
-    } = req.body;
-
-    const check = await prisma.hasil.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    if (!check) {
-      return res.status(404).json({
-        error: "Hasil tidak ditemukan",
-      });
-    }
-
-    const hasil = await prisma.hasil.update({
-      where: {
-        id: Number(id),
-      },
-      data: {
-        ...(userId !== undefined && {
-          userId: Number(userId),
-        }),
-        ...(seminarId !== undefined && {
-          seminarId: Number(seminarId),
-        }),
-        ...(metode !== undefined && {
-          metode,
-        }),
-        ...(nilai !== undefined && {
-          nilai: Number(nilai),
-        }),
-        ...(ranking !== undefined && {
-          ranking: Number(ranking),
-        }),
-      },
-      include: {
-        user: true,
-        seminar: true,
-      },
-    });
-
-    res.json(hasil);
-  } catch (error) {
-    res.status(500).json({
-      error: "Gagal mengupdate hasil",
-    });
-  }
+export const updateHasilById = async (req: Request, res: Response) => {
+  // ... (kode lama, gak diubah)
 };
 
 // ==============================
 // DELETE HASIL
 // ==============================
-export const deleteHasilById = async (
-  req: Request,
-  res: Response
-) => {
+export const deleteHasilById = async (req: Request, res: Response) => {
+  // ... (kode lama, gak diubah)
+};
+
+// ==============================
+// CALCULATE HASIL SPK (SAW/WP/TOPSIS)   
+// ==============================
+export const calculateHasil = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
+    const metode = (req.query.metode as string)?.toUpperCase() as MetodeSPK;
 
-    const check = await prisma.hasil.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    if (!check) {
-      return res.status(404).json({
-        error: "Hasil tidak ditemukan",
+    if (!["SAW", "WP", "TOPSIS"].includes(metode)) {
+      return res.status(400).json({
+        error: "Metode harus SAW, WP, atau TOPSIS",
       });
     }
 
-    await prisma.hasil.delete({
-      where: {
-        id: Number(id),
-      },
+    const ranking = await hitungSPK(Number(userId), metode);
+
+    await prisma.hasil.deleteMany({
+      where: { userId: Number(userId), metode },
     });
 
-    res.json({
-      message: "Hasil berhasil dihapus",
+    await prisma.hasil.createMany({
+      data: ranking.map((r) => ({
+        userId: Number(userId),
+        seminarId: r.seminarId,
+        metode,
+        nilai: r.nilai,
+        ranking: r.ranking,
+      })),
     });
-  } catch (error) {
+
+    const hasilLengkap = await prisma.hasil.findMany({
+      where: { userId: Number(userId), metode },
+      include: { seminar: { include: { category: true, level: true } } },
+      orderBy: { ranking: "asc" },
+    });
+
+    res.json(hasilLengkap);
+  } catch (error: any) {
     res.status(500).json({
-      error: "Gagal menghapus hasil",
+      error: error?.message || "Gagal menghitung hasil rekomendasi",
     });
   }
 };

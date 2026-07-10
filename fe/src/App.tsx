@@ -16,6 +16,9 @@ import Home from "./pages/user/Home";
 import UserSeminarList from "./pages/user/SeminarList";
 import Profile from "./pages/user/Profile";
 import MyRegistration from "./pages/user/MyRegistration";
+import Bobot from "./pages/user/Bobot";
+import Hasil from "./pages/user/Hasil";
+
 
 
 // import Bobot from "./pages/user/Bobot";
@@ -104,7 +107,7 @@ function App() {
             }
           />
 
-          {/* <Route
+           <Route
             path="/bobot"
             element={
               <ProtectedRoute role="USER">
@@ -113,9 +116,9 @@ function App() {
                 </UserLayout>
               </ProtectedRoute>
             }
-          /> */}
+          /> 
 
-          {/* <Route
+           /<Route
             path="/hasil"
             element={
               <ProtectedRoute role="USER">
@@ -124,7 +127,7 @@ function App() {
                 </UserLayout>
               </ProtectedRoute>
             }
-          /> */}
+          />  
 
           {/* ================= ADMIN ================= */}
 

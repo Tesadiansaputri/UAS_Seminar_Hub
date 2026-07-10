@@ -63,7 +63,7 @@ export const createBobot = async (req: Request, res: Response) => {
       bobot_harga,
       bobot_kuota,
       bobot_rating,
-      bobot_relevansi,
+      bobot_level,
       bobot_fasilitas,
     } = req.body;
 
@@ -72,7 +72,7 @@ export const createBobot = async (req: Request, res: Response) => {
       bobot_harga === undefined ||
       bobot_kuota === undefined ||
       bobot_rating === undefined ||
-      bobot_relevansi === undefined ||
+      bobot_level === undefined ||
       bobot_fasilitas === undefined
     ) {
       return res.status(400).json({
@@ -98,7 +98,7 @@ export const createBobot = async (req: Request, res: Response) => {
         bobot_harga: Number(bobot_harga),
         bobot_kuota: Number(bobot_kuota),
         bobot_rating: Number(bobot_rating),
-        bobot_relevansi: Number(bobot_relevansi),
+        bobot_level: Number(bobot_level),
         bobot_fasilitas: Number(bobot_fasilitas),
       },
       include: {
@@ -128,7 +128,7 @@ export const updateBobotById = async (
       bobot_harga,
       bobot_kuota,
       bobot_rating,
-      bobot_relevansi,
+      bobot_level,
       bobot_fasilitas,
     } = req.body;
 
@@ -158,8 +158,8 @@ export const updateBobotById = async (
         ...(bobot_rating !== undefined && {
           bobot_rating: Number(bobot_rating),
         }),
-        ...(bobot_relevansi !== undefined && {
-          bobot_relevansi: Number(bobot_relevansi),
+        ...(bobot_level !== undefined && {
+          bobot_level: Number(bobot_level),
         }),
         ...(bobot_fasilitas !== undefined && {
           bobot_fasilitas: Number(bobot_fasilitas),
