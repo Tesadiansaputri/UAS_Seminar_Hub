@@ -6,7 +6,9 @@ const CategoryList = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState<any>(null);
-  const [form, setForm] = useState({ nama: '', description: '' });
+  const [form, setForm] = useState({
+  category_name: "",
+});
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,18 +30,18 @@ const CategoryList = () => {
 
   const openAdd = () => {
     setEditData(null);
-    setForm({ nama: '', description: '' });
+    setForm({ category_name: '' });
     setShowModal(true);
   };
 
   const openEdit = (cat: any) => {
     setEditData(cat);
-    setForm({ nama: cat.nama, description: cat.description });
+    setForm({ category_name: cat.category_name });
     setShowModal(true);
   };
 
   const handleSave = async () => {
-    if (!form.nama.trim()) return;
+    if (!form.category_name.trim()) return;
     try {
       if (editData) {
         await api.put(`/categories/${editData.id}`, form);
@@ -104,57 +106,104 @@ const CategoryList = () => {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
           {categories.map((cat) => (
-            <div key={cat.id} style={{
-              backgroundColor: 'white', borderRadius: '10px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-              padding: '24px', borderLeft: '4px solid #8b1e2b'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{
-                    width: '44px', height: '44px', borderRadius: '10px',
-                    backgroundColor: '#fdf2f3',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                  }}>
-                    <LayoutGrid size={22} color="#8b1e2b" />
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '15px', color: '#1f2937' }}>{cat.nama}</div>
-                    <div style={{
-                      fontSize: '11px', backgroundColor: '#fdf2f3',
-                      color: '#8b1e2b', padding: '2px 8px', borderRadius: '10px',
-                      fontWeight: '600', display: 'inline-block', marginTop: '4px'
-                    }}>
-                      {cat._count?.events ?? 0} Event
-                    </div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={() => openEdit(cat)}
-                    style={{
-                      width: '32px', height: '32px', borderRadius: '8px',
-                      backgroundColor: '#eff6ff', border: 'none', cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}>
-                    <Pencil size={14} color="#3b82f6" />
-                  </button>
-                  <button
-                    onClick={() => setDeleteId(cat.id)}
-                    style={{
-                      width: '32px', height: '32px', borderRadius: '8px',
-                      backgroundColor: '#fef2f2', border: 'none', cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}>
-                    <Trash2 size={14} color="#ef4444" />
-                  </button>
-                </div>
-              </div>
-              <p style={{ color: '#6b7280', fontSize: '13px', marginTop: '12px', lineHeight: 1.6 }}>
-                {cat.description}
-              </p>
-            </div>
-          ))}
+  <div
+    key={cat.id}
+    style={{
+      backgroundColor: "white",
+      borderRadius: "10px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+      padding: "24px",
+      borderLeft: "4px solid #8b1e2b",
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "14px",
+        }}
+      >
+        <div
+          style={{
+            width: "48px",
+            height: "48px",
+            borderRadius: "10px",
+            backgroundColor: "#fdf2f3",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <LayoutGrid size={22} color="#8b1e2b" />
+        </div>
+
+        <div>
+          <div
+            style={{
+              fontSize: "17px",
+              fontWeight: "bold",
+              color: "#1f2937",
+            }}
+          >
+            {cat.category_name}
+          </div>
+
+          <div
+            style={{
+              marginTop: "6px",
+              display: "inline-block",
+              background: "#fdf2f3",
+              color: "#8b1e2b",
+              padding: "4px 10px",
+              borderRadius: "20px",
+              fontSize: "12px",
+              fontWeight: 600,
+            }}
+          >
+            {cat._count?.seminars || 0} Seminar
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", gap: "8px" }}>
+        <button
+          onClick={() => openEdit(cat)}
+          style={{
+            width: "34px",
+            height: "34px",
+            border: "none",
+            borderRadius: "8px",
+            background: "#eef5ff",
+            cursor: "pointer",
+          }}
+        >
+          <Pencil size={16} color="#2563eb" />
+        </button>
+
+        <button
+          onClick={() => setDeleteId(cat.id)}
+          style={{
+            width: "34px",
+            height: "34px",
+            border: "none",
+            borderRadius: "8px",
+            background: "#fff1f2",
+            cursor: "pointer",
+          }}
+        >
+          <Trash2 size={16} color="#ef4444" />
+        </button>
+      </div>
+    </div>
+  </div>
+))}
         </div>
       )}
 
@@ -185,8 +234,8 @@ const CategoryList = () => {
                 Nama Kategori
               </label>
               <input
-                value={form.nama}
-                onChange={e => setForm({ ...form, nama: e.target.value })}
+                value={form.category_name}
+                onChange={e => setForm({ ...form, category_name: e.target.value })}
                 placeholder="contoh: Teknologi"
                 style={{
                   width: '100%', padding: '10px 14px', borderRadius: '8px',
@@ -196,22 +245,6 @@ const CategoryList = () => {
               />
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                Deskripsi
-              </label>
-              <textarea
-                value={form.description}
-                onChange={e => setForm({ ...form, description: e.target.value })}
-                placeholder="Deskripsi kategori..."
-                rows={3}
-                style={{
-                  width: '100%', padding: '10px 14px', borderRadius: '8px',
-                  border: '1px solid #d1d5db', fontSize: '14px', outline: 'none',
-                  resize: 'none', boxSizing: 'border-box'
-                }}
-              />
-            </div>
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <button

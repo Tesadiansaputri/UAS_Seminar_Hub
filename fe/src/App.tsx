@@ -28,9 +28,13 @@ import SpeakerList from "./pages/admin/SpeakerList";
 import SeminarListAdmin from "./pages/admin/SeminarList";
 import SpkSaw from "./pages/admin/SpkSaw";
 
+
 // Super Admin
 import SuperAdminDashboard from "./pages/super_admin/Dashboard";
 import DetailSeminar from "./pages/user/DetailSeminar";
+import RegistrationList from "./pages/admin/RegistrationList";
+import LevelList from "./pages/admin/LevelList";
+import FasilitasList from "./pages/admin/FasilitasList";
 
 function App() {
   return (
@@ -124,60 +128,104 @@ function App() {
 
           {/* ================= ADMIN ================= */}
 
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute role="ADMIN">
-                <Layout>
-                  <Dashboard />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
+<Route
+  path="/admin/dashboard"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <Dashboard />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
-          <Route
-            path="/admin/category"
-            element={
-              <ProtectedRoute role="ADMIN">
-                <Layout>
-                  <CategoryList />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
+<Route
+  path="/admin/seminar"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <SeminarListAdmin />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
-          <Route
-            path="/admin/speaker"
-            element={
-              <ProtectedRoute role="ADMIN">
-                <Layout>
-                  <SpeakerList />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
+<Route
+  path="/admin/category"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <CategoryList />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
-          <Route
-            path="/admin/seminar"
-            element={
-              <ProtectedRoute role="ADMIN">
-                <Layout>
-                  <SeminarListAdmin />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
+<Route
+  path="/admin/speaker"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <SpeakerList />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
-          <Route
-            path="/admin/spk"
-            element={
-              <ProtectedRoute role="ADMIN">
-                <Layout>
-                  <SpkSaw />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
+<Route
+  path="/admin/fasilitas"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <FasilitasList />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/level"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <LevelList />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+
+{/* <Route
+  path="/admin/rating"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <RatingList />
+      </Layout>
+    </ProtectedRoute>
+  }
+/> */}
+
+<Route
+  path="/admin/registration"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <RegistrationList />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/spk"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <SpkSaw />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
           {/* ================= SUPER ADMIN ================= */}
 

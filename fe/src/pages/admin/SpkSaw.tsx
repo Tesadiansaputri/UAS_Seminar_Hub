@@ -50,7 +50,7 @@ const SpkSaw = () => {
 
   const fetchSpeakers = async () => {
     try {
-      const res = await api.get('/speakers');
+      const res = await api.get('/speaker');
       // Tambah field relevansi dari spkNilai kalau ada
       const data = res.data.map((sp: any) => ({
         ...sp,
@@ -89,7 +89,7 @@ const SpkSaw = () => {
     setSaveLoading(true);
     try {
       // Update speaker
-      await api.put(`/speakers/${editId}`, {
+      await api.put(`/speaker/${editId}`, {
         nama: speakers.find(s => s.id === editId)?.nama,
         keahlian: speakers.find(s => s.id === editId)?.keahlian,
         bio: speakers.find(s => s.id === editId)?.bio,

@@ -73,9 +73,11 @@ model Speaker {
   email String @unique
   bidang_keahlian String
 
+  rating Float @default(0)
+
   seminar SpeakerSeminar[]
 
-  rating RatingPembicara[]
+  ratings RatingPembicara[]
 
   @@map("speaker")
 }

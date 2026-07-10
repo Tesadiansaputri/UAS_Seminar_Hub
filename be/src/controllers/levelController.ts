@@ -50,20 +50,20 @@ export const getLevelById = async (req: Request, res: Response) => {
 // ===========================
 export const createLevel = async (req: Request, res: Response) => {
   try {
-    const { nama, nilai } = req.body;
+    const { nama_level, nilai_level } = req.body;
 
-    if (!nama || nilai === undefined) {
-      return res.status(400).json({
-        message: "Semua field wajib diisi",
-      });
-    }
+if (!nama_level || nilai_level === undefined) {
+  return res.status(400).json({
+    message: "Semua field wajib diisi",
+  });
+}
 
-    const level = await prisma.level.create({
-      data: {
-        nama_level: nama,
-        nilai_level: Number(nilai),
-      },
-    });
+const level = await prisma.level.create({
+  data: {
+    nama_level,
+    nilai_level: Number(nilai_level),
+  },
+});
 
     res.status(201).json(level);
   } catch (error) {
@@ -79,7 +79,7 @@ export const createLevel = async (req: Request, res: Response) => {
 export const updateLevelById = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
-    const { nama, nilai } = req.body;
+    const { nama_level, nilai_level } = req.body;
 
     const check = await prisma.level.findUnique({
       where: { id },
@@ -94,8 +94,8 @@ export const updateLevelById = async (req: Request, res: Response) => {
     const level = await prisma.level.update({
       where: { id },
       data: {
-        nama_level: nama,
-        nilai_level: Number(nilai),
+        nama_level: nama_level,
+        nilai_level: Number(nilai_level),
       },
     });
 
