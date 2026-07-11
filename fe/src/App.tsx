@@ -15,7 +15,6 @@ import LandingPage from "./pages/user/LandingPage";
 import Home from "./pages/user/Home";
 import UserSeminarList from "./pages/user/SeminarList";
 import Profile from "./pages/user/Profile";
-import MyRegistration from "./pages/user/MyRegistration";
 import Bobot from "./pages/user/Bobot";
 import Hasil from "./pages/user/Hasil";
 
@@ -29,15 +28,16 @@ import Dashboard from "./pages/admin/Dashboard";
 import CategoryList from "./pages/admin/CategoryList";
 import SpeakerList from "./pages/admin/SpeakerList";
 import SeminarListAdmin from "./pages/admin/SeminarList";
-import SpkSaw from "./pages/admin/SpkSaw";
+
 
 
 // Super Admin
 import SuperAdminDashboard from "./pages/super_admin/Dashboard";
 import DetailSeminar from "./pages/user/DetailSeminar";
-import RegistrationList from "./pages/admin/RegistrationList";
 import LevelList from "./pages/admin/LevelList";
 import FasilitasList from "./pages/admin/FasilitasList";
+import KriteriaList from "./pages/admin/KriteriaList";
+import BobotList from "./pages/admin/BobotList";
 
 function App() {
   return (
@@ -96,7 +96,7 @@ function App() {
             }
           />
 
-          <Route
+          {/* <Route
             path="/my-registration"
             element={
               <ProtectedRoute role="USER">
@@ -105,7 +105,7 @@ function App() {
                 </UserLayout>
               </ProtectedRoute>
             }
-          />
+          /> */}
 
            <Route
             path="/bobot"
@@ -196,6 +196,26 @@ function App() {
     </ProtectedRoute>
   }
 />
+<Route
+  path="/admin/kriteria"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <KriteriaList />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin/bobot"
+  element={
+    <ProtectedRoute role="ADMIN">
+      <Layout>
+        <BobotList />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
 {/* <Route
   path="/admin/rating"
@@ -208,7 +228,7 @@ function App() {
   }
 /> */}
 
-<Route
+{/* <Route
   path="/admin/registration"
   element={
     <ProtectedRoute role="ADMIN">
@@ -217,9 +237,9 @@ function App() {
       </Layout>
     </ProtectedRoute>
   }
-/>
+/> */}
 
-<Route
+{/* <Route
   path="/admin/spk"
   element={
     <ProtectedRoute role="ADMIN">
@@ -228,7 +248,7 @@ function App() {
       </Layout>
     </ProtectedRoute>
   }
-/>
+/> */}
 
           {/* ================= SUPER ADMIN ================= */}
 

@@ -1,4 +1,5 @@
-import express from "express";
+import { Router } from "express";
+
 import {
   getAllHasil,
   getHasilById,
@@ -8,20 +9,26 @@ import {
   calculateHasil,
 } from "../controllers/hasilController.js";
 
-import { authMiddleware } from "../middlewares/authMiddlewares.js";
+const router = Router();
 
-const router = express.Router();
+// ==============================
+// CRUD HASIL
+// ==============================
 
 router.get("/", getAllHasil);
 
 router.get("/:id", getHasilById);
 
-router.post("/", authMiddleware, createHasil);
+router.post("/", createHasil);
 
-router.put("/:id", authMiddleware, updateHasilById);
+router.put("/:id", updateHasilById);
 
-router.delete("/:id", authMiddleware, deleteHasilById);
+router.delete("/:id", deleteHasilById);
 
-router.get("/calculate/:userId", authMiddleware, calculateHasil);
+// ==============================
+// HITUNG SAW
+// ==============================
+
+router.get("/hitung/:userId", calculateHasil);
 
 export default router;

@@ -14,7 +14,8 @@ import {
   User,
   Building2,
   Layers,
-  Calculator,
+  Settings,
+  Scale,
 } from "lucide-react";
 
 const adminMenus = [
@@ -48,13 +49,22 @@ const adminMenus = [
     label: "Level",
     path: "/admin/level",
   },
-  
-  
   {
-    icon: <Calculator size={18} />,
-    label: "SPK",
-    path: "/admin/spk",
-  },
+    label: "Kelola Kriteria",
+    path: "/admin/kriteria",
+    icon: <Settings size={18} />,
+},
+{
+    label: "Kelola Bobot",
+    path: "/admin/bobot",
+    icon: <Scale size={18} />,
+},
+  
+  // {
+  //   icon: <Calculator size={18} />,
+  //   label: "SPK",
+  //   path: "/admin/spk",
+  // },
 ];
 
 const userMenus = [
