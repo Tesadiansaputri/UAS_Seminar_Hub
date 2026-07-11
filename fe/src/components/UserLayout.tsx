@@ -1,71 +1,193 @@
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  CalendarDays, ScrollText, User, LogOut,
-  LayoutDashboard
+  CalendarDays,
+  LogOut,
+  LayoutDashboard,
+  LayoutGrid,
+  User,
 } from 'lucide-react';
 
+const COLOR = {
+  bg: '#FAF8F5',
+  surface: '#FFFFFF',
+  primary: '#8B1E2B',
+  text: '#241F1E',
+  textMuted: '#8A8380',
+  border: '#ECE6E1',
+};
+
+const FONT_BODY = "'Inter', sans-serif";
+
 const userMenus = [
-  { icon: <LayoutDashboard size={16} />, label: 'Dashboard', path: '/home' },
-  { icon: <CalendarDays size={16} />, label: 'Event', path: '/events' },
-  { icon: <ScrollText size={16} />, label: 'Pendaftaran Saya', path: '/my-registration' },
-  { icon: <User size={16} />, label: 'Profil', path: '/profile' },
+  {
+    icon: <LayoutDashboard size={18} />,
+    label: 'Dashboard',
+    path: '/home',
+  },
+  {
+    icon: <LayoutGrid size={18} />,
+    label: 'Seminar',
+    path: '/seminars',
+  },
+  {
+    icon: <User size={18} />,
+    label: 'Profil',
+    path: '/profile',
+  },
 ];
 
+const FONT_LINK_ID = 'seminarku-google-fonts';
+
+function useGoogleFonts() {
+  useEffect(() => {
+    if (document.getElementById(FONT_LINK_ID)) return;
+
+    const link = document.createElement('link');
+    link.id = FONT_LINK_ID;
+    link.rel = 'stylesheet';
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+
+    document.head.appendChild(link);
+  }, []);
+}
+
 const UserLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useGoogleFonts();
+
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', fontFamily: 'sans-serif' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: COLOR.bg,
+        fontFamily: FONT_BODY,
+      }}
+    >
+      {/* ================= NAVBAR ================= */}
+      <nav
+        style={{
+          background: COLOR.surface,
+          borderBottom: `1px solid ${COLOR.border}`,
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+            padding: '0 32px',
+            height: '72px',
 
-      {/* NAVBAR */}
-      <nav style={{
-        backgroundColor: 'white',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-        position: 'sticky', top: 0, zIndex: 50
-      }}>
-        <div style={{
-          maxWidth: '1200px', margin: '0 auto',
-          padding: '0 24px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          height: '64px'
-        }}>
-
-          {/* Logo */}
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
+            alignItems: 'center',
+          }}
+        >
+          {/* ================= LOGO ================= */}
           <div
-            onClick={() => navigate('/home')}
             style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              cursor: 'pointer', fontWeight: 'bold', fontSize: '18px', color: '#8b1e2b'
-            }}>
-            <CalendarDays size={22} color="#8b1e2b" />
-            SeminarKu
+              display: 'flex',
+              alignItems: 'center',
+              justifySelf: 'start',
+            }}
+          >
+            <div
+              onClick={() => navigate('/home')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                cursor: 'pointer',
+              }}
+            >
+              <div
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  background: COLOR.primary,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <CalendarDays size={19} color="white" />
+              </div>
+
+              <span
+                style={{
+                  color: COLOR.primary,
+                  fontWeight: 700,
+                  fontSize: 20,
+                }}
+              >
+                SeminarKu
+              </span>
+            </div>
           </div>
 
-          {/* Menu Desktop */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            {userMenus.map((menu, i) => {
+          {/* ================= MENU ================= */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '52px',
+              height: '100%',
+            }}
+          >
+            {userMenus.map((menu, index) => {
               const isActive = location.pathname === menu.path;
+
               return (
-                <button key={i}
+                <button
+                  key={index}
                   onClick={() => navigate(menu.path)}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: '6px',
-                    padding: '8px 16px', borderRadius: '8px',
-                    border: 'none', cursor: 'pointer', fontSize: '13px',
-                    fontWeight: isActive ? 'bold' : '500',
-                    backgroundColor: isActive ? '#fdf2f3' : 'transparent',
-                    color: isActive ? '#8b1e2b' : '#6b7280',
-                    transition: 'all 0.2s'
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '0 10px',
+                    height: '100%',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+
+                    borderBottom: isActive
+                      ? `3px solid ${COLOR.primary}`
+                      : '3px solid transparent',
+
+                    color: isActive
+                      ? COLOR.primary
+                      : COLOR.textMuted,
+
+                    fontWeight: isActive ? 600 : 500,
+                    fontSize: '14px',
+                    fontFamily: FONT_BODY,
+                    transition: '.2s',
                   }}
-                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.backgroundColor = '#f9fafb' }}
-                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent' }}
+                  onMouseEnter={(e) => {
+                    if (!isActive)
+                      e.currentTarget.style.color = COLOR.text;
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive)
+                      e.currentTarget.style.color =
+                        COLOR.textMuted;
+                  }}
                 >
                   {menu.icon}
                   {menu.label}
@@ -74,55 +196,53 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
             })}
           </div>
 
-          {/* User Info & Logout */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{
-                width: '32px', height: '32px', borderRadius: '50%',
-                backgroundColor: '#fdf2f3',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 'bold', fontSize: '13px', color: '#8b1e2b'
-              }}>
-                {user?.name?.charAt(0) || 'U'}
-              </div>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937' }}>{user?.name}</div>
-                <div style={{ fontSize: '11px', color: '#9ca3af' }}>{user?.email}</div>
-              </div>
-            </div>
-
+          {/* ================= LOGOUT ================= */}
+          <div
+            style={{
+              justifySelf: 'end',
+            }}
+          >
             <button
               onClick={handleLogout}
               style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                padding: '8px 16px', borderRadius: '8px',
-                border: '1px solid #fecaca', cursor: 'pointer',
-                fontSize: '13px', fontWeight: '600',
-                backgroundColor: '#fef2f2', color: '#ef4444'
-              }}>
-              <LogOut size={14} /> Logout
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '9px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                background: 'transparent',
+                cursor: 'pointer',
+                color: '#B3261E',
+                fontWeight: 600,
+                fontSize: '13px',
+                fontFamily: FONT_BODY,
+                transition: '.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#FEF2F2';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+              }}
+            >
+              <LogOut size={16} />
+              Logout
             </button>
           </div>
-
-        </div>
-
-        {/* Active Indicator */}
-        <div style={{ display: 'flex', maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
-          {userMenus.map((menu, i) => (
-            <div key={i} style={{
-              height: '3px', flex: 1,
-              backgroundColor: location.pathname === menu.path ? '#8b1e2b' : 'transparent',
-              borderRadius: '2px', transition: 'background 0.2s'
-            }} />
-          ))}
         </div>
       </nav>
 
-      {/* CONTENT */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px' }}>
+      {/* ================= CONTENT ================= */}
+      <div
+        style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          padding: '36px 32px',
+        }}
+      >
         {children}
       </div>
-
     </div>
   );
 };
