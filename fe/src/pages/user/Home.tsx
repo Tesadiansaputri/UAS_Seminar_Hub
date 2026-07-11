@@ -60,7 +60,7 @@ const Home = () => {
           </p>
 
           <button
-            onClick={() => navigate("/bobot")}
+            onClick={() => navigate("/recommendation")}
             className="bg-white text-red-900 px-8 py-3 rounded-lg font-bold hover:bg-gray-200"
           >
             Cari Rekomendasi

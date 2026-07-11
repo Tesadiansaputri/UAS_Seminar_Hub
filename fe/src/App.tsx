@@ -38,6 +38,7 @@ import LevelList from "./pages/admin/LevelList";
 import FasilitasList from "./pages/admin/FasilitasList";
 import KriteriaList from "./pages/admin/KriteriaList";
 import BobotList from "./pages/admin/BobotList";
+import Recommendation from "./pages/user/Recommendation";
 
 function App() {
   return (
@@ -96,23 +97,14 @@ function App() {
             }
           />
 
-          {/* <Route
-            path="/my-registration"
-            element={
-              <ProtectedRoute role="USER">
-                <UserLayout>
-                  <MyRegistration />
-                </UserLayout>
-              </ProtectedRoute>
-            }
-          /> */}
+          
 
            <Route
-            path="/bobot"
+            path="/recommendation"
             element={
               <ProtectedRoute role="USER">
                 <UserLayout>
-                  <Bobot />
+                  <Recommendation />
                 </UserLayout>
               </ProtectedRoute>
             }
