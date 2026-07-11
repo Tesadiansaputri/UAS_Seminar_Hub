@@ -104,7 +104,7 @@ function App() {
           
 
            <Route
-            path="/recommendation"
+            path="/recommendation" 
             element={
               <ProtectedRoute role="USER">
                 <UserLayout>
