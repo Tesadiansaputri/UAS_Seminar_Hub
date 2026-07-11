@@ -1,12 +1,20 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/db.js";
+
 import { hitungSAW } from "../services/sawService.js";
+import { hitungWP } from "../services/wpService.js";
+import { hitungTOPSIS } from "../services/topsisService.js";
+
 
 // ==============================
 // GET ALL HASIL
 // ==============================
-export const getAllHasil = async (req: Request, res: Response) => {
+export const getAllHasil = async (
+  req: Request,
+  res: Response
+) => {
   try {
+
     const hasil = await prisma.hasil.findMany({
       include: {
         user: true,
@@ -23,18 +31,26 @@ export const getAllHasil = async (req: Request, res: Response) => {
     });
 
     res.json(hasil);
+
   } catch (error) {
+
     res.status(500).json({
       error: "Gagal mengambil data hasil",
     });
+
   }
 };
+
 
 // ==============================
 // GET HASIL BY ID
 // ==============================
-export const getHasilById = async (req: Request, res: Response) => {
+export const getHasilById = async (
+  req: Request,
+  res: Response
+) => {
   try {
+
     const { id } = req.params;
 
     const hasil = await prisma.hasil.findUnique({
@@ -59,18 +75,24 @@ export const getHasilById = async (req: Request, res: Response) => {
     }
 
     res.json(hasil);
+
   } catch (error) {
+
     res.status(500).json({
       error: "Gagal mengambil data hasil",
     });
+
   }
 };
-
 // ==============================
-// CREATE HASIL (Manual)
+// CREATE HASIL (MANUAL)
 // ==============================
-export const createHasil = async (req: Request, res: Response) => {
+export const createHasil = async (
+  req: Request,
+  res: Response
+) => {
   try {
+
     const {
       userId,
       seminarId,
@@ -90,12 +112,16 @@ export const createHasil = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(hasil);
+
   } catch (error) {
+
     res.status(500).json({
       error: "Gagal menambahkan hasil",
     });
+
   }
 };
+
 
 // ==============================
 // UPDATE HASIL
@@ -105,6 +131,7 @@ export const updateHasilById = async (
   res: Response
 ) => {
   try {
+
     const { id } = req.params;
 
     const check = await prisma.hasil.findUnique({
@@ -130,7 +157,9 @@ export const updateHasilById = async (
         id: Number(id),
       },
       data: {
-        ...(metode && { metode }),
+        ...(metode && {
+          metode,
+        }),
         ...(nilai !== undefined && {
           nilai: Number(nilai),
         }),
@@ -141,13 +170,15 @@ export const updateHasilById = async (
     });
 
     res.json(hasil);
+
   } catch (error) {
+
     res.status(500).json({
       error: "Gagal mengupdate hasil",
     });
+
   }
 };
-
 // ==============================
 // DELETE HASIL
 // ==============================
@@ -156,6 +187,7 @@ export const deleteHasilById = async (
   res: Response
 ) => {
   try {
+
     const { id } = req.params;
 
     const check = await prisma.hasil.findUnique({
@@ -179,15 +211,17 @@ export const deleteHasilById = async (
     res.json({
       message: "Hasil berhasil dihapus",
     });
+
   } catch (error) {
+
     res.status(500).json({
       error: "Gagal menghapus hasil",
     });
+
   }
 };
-
 // ==============================
-// HITUNG SAW
+// HITUNG SPK (SAW / WP / TOPSIS)
 // ==============================
 export const calculateHasil = async (
   req: Request,
@@ -196,12 +230,81 @@ export const calculateHasil = async (
   try {
 
     const { userId } = req.params;
+    const metode = (req.query.metode as string)?.toUpperCase();
 
-    const hasil = await hitungSAW(Number(userId));
+    let hasil: any[] = [];
+
+    switch (metode) {
+
+      case "SAW":
+        hasil = await hitungSAW(Number(userId));
+        break;
+
+      case "WP":
+        hasil = await hitungWP(Number(userId));
+        break;
+
+      case "TOPSIS":
+        hasil = await hitungTOPSIS(Number(userId));
+        break;
+
+      default:
+        return res.status(400).json({
+          error: "Metode harus SAW atau WP.",
+        });
+
+    }
+
+    // ===========================
+    // Hapus hasil lama
+    // ===========================
+
+    await prisma.hasil.deleteMany({
+      where: {
+        userId: Number(userId),
+        metode,
+      },
+    });
+
+    // ===========================
+    // Simpan hasil baru
+    // ===========================
+
+    await prisma.hasil.createMany({
+      data: hasil.map((item) => ({
+        userId: Number(userId),
+        seminarId: item.seminarId,
+        metode,
+        nilai: item.nilai,
+        ranking: item.ranking,
+      })),
+    });
+
+    // ===========================
+    // Ambil hasil lengkap
+    // ===========================
+
+    const data = await prisma.hasil.findMany({
+      where: {
+        userId: Number(userId),
+        metode,
+      },
+      include: {
+        seminar: {
+          include: {
+            category: true,
+            level: true,
+          },
+        },
+      },
+      orderBy: {
+        ranking: "asc",
+      },
+    });
 
     res.json({
-      message: "Perhitungan SAW berhasil",
-      data: hasil,
+      message: `Perhitungan ${metode} berhasil`,
+      data,
     });
 
   } catch (error: any) {

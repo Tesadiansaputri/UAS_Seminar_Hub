@@ -20,6 +20,7 @@ import Hasil from "./pages/user/Hasil";
 
 
 
+
 // import Bobot from "./pages/user/Bobot";
 // import Hasil from "./pages/user/Hasil";
 
@@ -36,8 +37,9 @@ import SuperAdminDashboard from "./pages/super_admin/Dashboard";
 import DetailSeminar from "./pages/user/DetailSeminar";
 import LevelList from "./pages/admin/LevelList";
 import FasilitasList from "./pages/admin/FasilitasList";
-import KriteriaList from "./pages/admin/KriteriaList";
+import KriteriaList from "./pages/admin/PerhitunganSPK";
 import BobotList from "./pages/admin/BobotList";
+import PerhitunganSPK from "./pages/admin/PerhitunganSPK";
 
 function App() {
   return (
@@ -96,16 +98,7 @@ function App() {
             }
           />
 
-          {/* <Route
-            path="/my-registration"
-            element={
-              <ProtectedRoute role="USER">
-                <UserLayout>
-                  <MyRegistration />
-                </UserLayout>
-              </ProtectedRoute>
-            }
-          /> */}
+          
 
            <Route
             path="/bobot"
@@ -197,11 +190,11 @@ function App() {
   }
 />
 <Route
-  path="/admin/kriteria"
+  path="/admin/perhitungan-spk"
   element={
     <ProtectedRoute role="ADMIN">
       <Layout>
-        <KriteriaList />
+        <PerhitunganSPK />
       </Layout>
     </ProtectedRoute>
   }

@@ -217,6 +217,16 @@ model Bobot{
 
   @@map("bobot")
 }
+model SubKriteria {
+
+  id Int @id @default(autoincrement())
+
+  jenis String
+  nama String
+  nilai Float
+
+  @@map("sub_kriteria")
+}
 
 //////////////////////////////////////////////////
 // HASIL SPK
@@ -243,4 +253,14 @@ model Hasil{
   seminar Seminar @relation(fields:[seminarId],references:[id])
 
   @@map("hasil")
+}
+
+model Kriteria {
+  id      Int    @id @default(autoincrement())
+  kode    String @unique
+  nama    String
+  jenis   String
+  sumber  String
+
+  @@map("kriteria")
 }
