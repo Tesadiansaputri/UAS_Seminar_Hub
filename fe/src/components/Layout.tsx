@@ -1,3 +1,4 @@
+import { normalizeRole } from '../utils/role';
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -95,6 +96,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const userRole = normalizeRole(user?.role);
+
 
   const menus = user?.role === "ADMIN" ? adminMenus : userMenus;
 

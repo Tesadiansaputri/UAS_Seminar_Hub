@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import { normalizeRole } from '../../utils/role';
 
 const Login = () => {
   const { login } = useAuth();
@@ -17,8 +18,12 @@ const Login = () => {
     setError('');
     try {
       const res = await api.post('/auth/login', { email, password });
-       const role = res.data.user.role;
-      login(res.data.token, res.data.user);
+      const user = {
+        ...res.data.user,
+        role: normalizeRole(res.data.user.role),
+      };
+      const role = user.role;
+      login(res.data.token, user);
       if (role === "SUPER_ADMIN") {
         navigate("/super-admin/dashboard");
       }
