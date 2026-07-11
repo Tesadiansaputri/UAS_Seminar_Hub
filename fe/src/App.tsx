@@ -34,6 +34,8 @@ import SpkSaw from "./pages/admin/SpkSaw";
 // Super Admin
 import SuperAdminDashboard from "./pages/super_admin/Dashboard";
 import DetailSeminar from "./pages/user/DetailSeminar";
+import AdminList from "./pages/super_admin/AdminList";
+import UserList from "./pages/super_admin/UserList";
 
 function App() {
   return (
@@ -114,7 +116,7 @@ function App() {
             }
           /> 
 
-           /<Route
+           <Route
             path="/hasil"
             element={
               <ProtectedRoute role="USER">
@@ -188,9 +190,25 @@ function App() {
             path="/super-admin/dashboard"
             element={
               <ProtectedRoute role="SUPER_ADMIN">
-                <Layout>
-                  <SuperAdminDashboard />
-                </Layout>
+                <SuperAdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/super-admin/admin"
+            element={
+              <ProtectedRoute role="SUPER_ADMIN">
+                <AdminList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/super-admin/user"
+            element={
+              <ProtectedRoute role="SUPER_ADMIN">
+                <UserList />
               </ProtectedRoute>
             }
           />
