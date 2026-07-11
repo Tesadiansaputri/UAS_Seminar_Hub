@@ -10,7 +10,7 @@ import bobotRoute from "./routes/bobotRoute.js";
 import levelRoute from "./routes/levelRoute.js"
 import speakerSeminarRoute from "./routes/speakerSeminarRoute.js";
 import fasilitasRoute from "./routes/fasilitasRoute.js";
-import kelengkapanFasilitasRoute from "./routes/kelengkapanFasilitas.js"
+import kelengkapanFasilitasRoute from "./routes/kelengkapanFasilitasRoute.js"
 import ratingPembicaraRoute from "./routes/ratingPembicaraRoute.js";
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
@@ -31,14 +31,15 @@ app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/categories", categoryRoute);
 app.use("/levels", levelRoute);
-app.use("/speakers", speakerRoute);
-app.use("/seminars", seminarRoute);
+app.use("/speaker", speakerRoute);
+app.use("/seminar", seminarRoute);
 app.use("/speaker-seminars", speakerSeminarRoute);
 app.use("/fasilitas", fasilitasRoute);
 app.use("/kelengkapan-fasilitas", kelengkapanFasilitasRoute);
 app.use("/rating-pembicara", ratingPembicaraRoute);
 app.use("/bobot", bobotRoute);
 app.use("/hasil", hasilRoute);
+
 
 
 

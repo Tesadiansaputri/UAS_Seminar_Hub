@@ -1,485 +1,614 @@
-
-import { useState, useEffect } from 'react';
-import { CalendarDays, Plus, Pencil, Trash2, X, Check, Clock, Users } from 'lucide-react';
+import { useEffect, useState } from "react";
 import api from '../../services/api';
 
+interface Category {
+  id: number;
+  category_name: string;
+}
+
+interface Level {
+  id: number;
+  nama_level: string;
+}
+
+interface Seminar {
+  id: number;
+  seminar_name: string;
+  tanggal: string;
+  harga: number;
+  kuota_tersedia: number;
+
+  id_category: number;
+  id_level: number;
+
+  category: Category;
+  level: Level;
+}
+
 const emptyForm = {
-  title: '',
-  category: '',
-  speaker: '',
-  date: '',
-  time: '',
-  location: '',
-  kuota: '',
-  harga: '',
-  status: 'Draft'
+  seminar_name: "",
+  tanggal: "",
+  harga: "",
+  kuota_tersedia: "",
+  id_category: "",
+  id_level: "",
 };
 
+const SeminarList = () => {
+  const [seminars, setSeminars] = useState<Seminar[]>([]);
+  const [filteredSeminars, setFilteredSeminars] = useState<Seminar[]>([]);
 
-const EventList = () => {
-  const [categories, setCategories] = useState<any[]>([]);
-  const [speakers, setSpeakers] = useState<any[]>([]);
-  const [events, setEvents] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [levels, setLevels] = useState<Level[]>([]);
+
+  const [loading, setLoading] = useState(true);
+
+  const [search, setSearch] = useState("");
+
   const [showModal, setShowModal] = useState(false);
-  const [editData, setEditData] = useState<any>(null);
-  const [form, setForm] = useState<any>(emptyForm);
+
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
+  const [editData, setEditData] = useState<Seminar | null>(null);
 
-  const [search, setSearch] = useState('');
-  const [filterStatus, setFilterStatus] = useState('Semua');
-  // 🔥 FETCH DATA DARI DB
-  const fetchEvents = async () => {
-    try {
-      const res = await api.get('/events');
-      // Transform backend response ke format yang frontend pakai
-      const transformed = res.data.map((e: any) => ({
-        id: e.id,
-        title: e.nama,
-        category: e.category?.nama || 'N/A',
-        categoryId: e.categoryId,
-        speaker: e.speaker?.nama || 'N/A',
-        speakerId: e.speakerId,
-        date: new Date(e.tanggal).toLocaleDateString('id-ID'),
-        tanggal: e.tanggal,
-        time: e.time,
-        location: e.location,
-        kuota: e.kuota,
-        peserta: e._count?.registrations || 0,
-        harga: Number(e.harga) || 0,
-        status: e.status,
-        createdAt: e.createdAt,
-        updatedAt: e.updatedAt
-      }));
-      setEvents(transformed);
-    } catch (err) {
-      console.error('Gagal fetch events:', err);
-    }
-  };
-
-  const fetchCategories = async () => {
-  try {
-    const res = await api.get('/categories');
-    setCategories(res.data);
-  } catch (err) {
-    console.error('Gagal fetch category:', err);
-  }
-};
-
-const fetchSpeakers = async () => {
-  try {
-    const res = await api.get('/speakers');
-    setSpeakers(res.data);
-  } catch (err) {
-    console.error('Gagal fetch speaker:', err);
-  }
-};
+  const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
-    fetchEvents();
-    fetchCategories();
-    fetchSpeakers();
+    getSeminars();
+    getCategories();
+    getLevels();
   }, []);
 
-  // 🔥 OPEN MODAL TAMBAH
-  const openAdd = () => {
-    setEditData(null);
-    setForm(emptyForm);
-    setShowModal(true);
-  };
+  useEffect(() => {
+    const result = seminars.filter((item) =>
+      item.seminar_name
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
 
-  // 🔥 OPEN MODAL EDIT
-  const openEdit = (event: any) => {
-  setEditData(event);
-  setForm({
-    ...event,
-    category: event.categoryId,
-    speaker: event.speakerId
-  });
+    setFilteredSeminars(result);
+  }, [search, seminars]);
+  const getSeminars = async () => {
+  try {
+    const res = await api.get("/seminar");
+
+    setSeminars(res.data);
+    setFilteredSeminars(res.data);
+  } catch (err) {
+    console.log("Gagal mengambil seminar:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const getCategories = async () => {
+  try {
+    const res = await api.get("/categories");
+    setCategories(res.data);
+  } catch (err) {
+    console.log("Gagal mengambil kategori:", err);
+  }
+};
+
+const getLevels = async () => {
+  try {
+    const res = await api.get("/levels");
+    setLevels(res.data);
+  } catch (err) {
+    console.log("Gagal mengambil level:", err);
+  }
+};
+
+const openAdd = () => {
+  setEditData(null);
+  setForm(emptyForm);
   setShowModal(true);
 };
 
-  // 🔥 SAVE KE DATABASE (NO DUMMY)
-  const handleSave = async () => {
-  try {
-    if (!form.title.trim()) return;
+const openEdit = (seminar: Seminar) => {
+  setEditData(seminar);
 
+  setForm({
+    seminar_name: seminar.seminar_name,
+    tanggal: seminar.tanggal.split("T")[0],
+    harga: seminar.harga.toString(),
+    kuota_tersedia: seminar.kuota_tersedia.toString(),
+    id_category: seminar.id_category.toString(),
+    id_level: seminar.id_level.toString(),
+  });
+
+  setShowModal(true);
+};
+
+const handleSave = async () => {
+  try {
     const payload = {
-      nama: form.title, // ✅ FIX
-      categoryId: Number(form.category),
-      speakerId: Number(form.speaker),
-      tanggal: new Date(form.date), // ✅ FIX (DateTime)
-      time: form.time,
-      location: form.location,
-      kuota: Number(form.kuota),
+      seminar_name: form.seminar_name,
+      tanggal: form.tanggal,
       harga: Number(form.harga),
-      status: form.status
+      kuota_tersedia: Number(form.kuota_tersedia),
+      id_category: Number(form.id_category),
+      id_level: Number(form.id_level),
     };
 
     if (editData) {
-      await api.put(`/events/${editData.id}`, payload);
+      await api.put(`/seminar/${editData.id}`, payload);
     } else {
-      await api.post('/events', payload);
+      await api.post("/seminar", payload);
     }
 
-    await fetchEvents();
     setShowModal(false);
+    setForm(emptyForm);
+    setEditData(null);
 
+    getSeminars();
   } catch (err: any) {
-    console.error("ERROR:", err.response?.data || err.message);
+    console.log(err.response?.data);
+    console.log(err);
   }
 };
-  // 🔥 DELETE KE DATABASE
-  const handleDelete = async (id: number) => {
-    try {
-      await api.delete(`/events/${id}`);
-      await fetchEvents();
-      setDeleteId(null);
-    } catch (err) {
-      console.error('Gagal delete:', err);
-    }
-  };
 
-  // 🔥 FILTER
-  const filtered = events.filter((e) => {
-    const matchSearch = e.title?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = filterStatus === 'Semua' || e.status === filterStatus;
-    return matchSearch && matchStatus;
-  }).sort((a, b) => {
-    // Sort by date descending (newest first)
-    return new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime();
-  });
+const handleDelete = async (id: number) => {
+  try {
+    await api.delete(`/seminar/${id}`);
 
+    setDeleteId(null);
 
+    getSeminars();
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-  return (
-    <div>
+const thStyle = {
+  padding: "14px",
+  textAlign: "left" as const,
+  background: "#f3f4f6",
+  color: "#374151",
+  fontWeight: "bold",
+  fontSize: "14px",
+};
 
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>
-            Manajemen Event
-          </h1>
-          <p style={{ color: '#6b7280', fontSize: '14px' }}>
-            Kelola seminar & workshop
-          </p>
-        </div>
-        <button
-          onClick={openAdd}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            backgroundColor: '#8b1e2b', color: 'white',
-            border: 'none', cursor: 'pointer', borderRadius: '8px',
-            padding: '10px 20px', fontWeight: 'bold', fontSize: '13px'
-          }}>
-          <Plus size={16} /> Tambah Event
-        </button>
+const tdStyle = {
+  padding: "14px",
+  borderBottom: "1px solid #e5e7eb",
+  color: "#374151",
+  fontSize: "14px",
+};
+
+const inputStyle = {
+  width: "100%",
+  padding: "10px 12px",
+  marginTop: "6px",
+  borderRadius: "8px",
+  border: "1px solid #d1d5db",
+  outline: "none",
+  fontSize: "14px",
+  boxSizing: "border-box" as const,
+};
+
+const editButton = {
+  background: "#2563eb",
+  color: "white",
+  border: "none",
+  padding: "8px 14px",
+  borderRadius: "6px",
+  cursor: "pointer",
+  marginRight: "8px",
+};
+
+const deleteButton = {
+  background: "#dc2626",
+  color: "white",
+  border: "none",
+  padding: "8px 14px",
+  borderRadius: "6px",
+  cursor: "pointer",
+};
+
+return (
+  <div style={{ padding: "30px" }}>
+
+    {/* Header */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "25px",
+      }}
+    >
+      <div>
+        <h2 style={{ margin: 0 }}>Manajemen Seminar</h2>
+
+        <p style={{ color: "#666", marginTop: "6px" }}>
+          Kelola data seminar
+        </p>
       </div>
 
-      {/* Filter & Search */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Cari event..."
+      <button
+        onClick={openAdd}
+        style={{
+          background: "#8b1e2b",
+          color: "white",
+          border: "none",
+          padding: "10px 20px",
+          borderRadius: "8px",
+          cursor: "pointer",
+          fontWeight: "bold",
+        }}
+      >
+        Tambah Seminar
+      </button>
+    </div>
+
+    {/* Search */}
+    <input
+      type="text"
+      placeholder="Cari seminar..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      style={{
+        width: "100%",
+        padding: "12px",
+        marginBottom: "20px",
+        borderRadius: "8px",
+        border: "1px solid #ccc",
+        outline: "none",
+        boxSizing: "border-box",
+      }}
+    />
+
+    {/* Table */}
+    <div
+      style={{
+        background: "white",
+        borderRadius: "10px",
+        overflow: "hidden",
+        boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+      }}
+    >
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+        }}
+      >
+        <thead
           style={{
-            flex: 1, padding: '10px 14px', borderRadius: '8px',
-            border: '1px solid #d1d5db', fontSize: '14px', outline: 'none'
+            background: "#f3f4f6",
           }}
-        />
-        {['Semua', 'Aktif', 'Draft'].map(s => (
-          <button key={s}
-            onClick={() => setFilterStatus(s)}
-            style={{
-              padding: '10px 20px', borderRadius: '8px', fontSize: '13px',
-              fontWeight: '600', cursor: 'pointer', border: 'none',
-              backgroundColor: filterStatus === s ? '#8b1e2b' : '#f3f4f6',
-              color: filterStatus === s ? 'white' : '#6b7280'
-            }}>{s}</button>
-        ))}
-      </div>
+        >
+          <tr>
+            <th style={thStyle}>No</th>
+            <th style={thStyle}>Nama Seminar</th>
+            <th style={thStyle}>Kategori</th>
+            <th style={thStyle}>Level</th>
+            <th style={thStyle}>Tanggal</th>
+            <th style={thStyle}>Harga</th>
+            <th style={thStyle}>Kuota</th>
+            <th style={thStyle}>Aksi</th>
+          </tr>
+        </thead>
 
-      {/* Table */}
-      <div style={{
-        backgroundColor: 'white', borderRadius: '10px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden'
-      }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ backgroundColor: '#fdf2f3' }}>
-              {['Event', 'Kategori', 'Speaker', 'Tanggal & Waktu', 'Kuota', 'Harga', 'Status', 'Aksi'].map((h, i) => (
-                <th key={i} style={{
-                  padding: '12px 16px', textAlign: 'left',
-                  fontSize: '12px', color: '#6b7280', fontWeight: '600'
-                }}>{h}</th>
-              ))}
+        <tbody>
+          {loading ? (
+            <tr>
+              <td
+                colSpan={8}
+                style={{
+                  textAlign: "center",
+                  padding: "20px",
+                }}
+              >
+                Loading...
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {filtered.map((e) => (
-              <tr key={e.id} style={{ borderBottom: '1px solid #f9fafb' }}>
-                <td style={{ padding: '14px 16px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937' }}>{e.title}</div>
-                  <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Users size={10} /> {e.peserta}/{e.kuota} peserta
-                  </div>
-                </td>
-                <td style={{ padding: '14px 16px' }}>
-                  <span style={{
-                    fontSize: '11px', backgroundColor: '#fdf2f3',
-                    color: '#8b1e2b', padding: '2px 8px', borderRadius: '10px', fontWeight: '600'
-                  }}>{e.category}</span>
-                </td>
-                <td style={{ padding: '14px 16px', fontSize: '13px', color: '#374151' }}>{e.speaker}</td>
-                <td style={{ padding: '14px 16px' }}>
-                  <div style={{ fontSize: '13px', color: '#374151', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <CalendarDays size={12} color="#8b1e2b" /> {e.date}
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Clock size={10} /> {e.time}
-                  </div>
-                </td>
-                <td style={{ padding: '14px 16px', fontSize: '13px', color: '#374151' }}>{e.kuota} orang</td>
-                <td style={{ padding: '14px 16px', fontSize: '13px', fontWeight: '600', color: '#8b1e2b' }}>
-                  {e.harga === 0 ? 'Gratis' : `Rp ${e.harga.toLocaleString('id-ID')}`}
-                </td>
-                <td style={{ padding: '14px 16px' }}>
-                  <span style={{
-                    fontSize: '11px', fontWeight: '600',
-                    padding: '2px 10px', borderRadius: '10px',
-                    backgroundColor: e.status === 'Aktif' ? '#dcfce7' : '#f3f4f6',
-                    color: e.status === 'Aktif' ? '#16a34a' : '#9ca3af'
-                  }}>{e.status}</span>
-                </td>
-                <td style={{ padding: '14px 16px' }}>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button
-                      onClick={() => openEdit(e)}
-                      style={{
-                        width: '32px', height: '32px', borderRadius: '8px',
-                        backgroundColor: '#eff6ff', border: 'none', cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                      }}>
-                      <Pencil size={14} color="#3b82f6" />
-                    </button>
-                    <button
-                      onClick={() => setDeleteId(e.id)}
-                      style={{
-                        width: '32px', height: '32px', borderRadius: '8px',
-                        backgroundColor: '#fef2f2', border: 'none', cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                      }}>
-                      <Trash2 size={14} color="#ef4444" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={8} style={{ padding: '40px', textAlign: 'center', color: '#9ca3af', fontSize: '14px' }}>
-                  Tidak ada event ditemukan
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+          ) : filteredSeminars.length === 0 ? (
+            <tr>
+              <td
+                colSpan={8}
+                style={{
+                  textAlign: "center",
+                  padding: "20px",
+                }}
+              >
+                Belum ada data seminar
+              </td>
+            </tr>
+          ) : (
+            filteredSeminars.map((item, index) => (
+              <tr key={item.id}>
+                <td style={tdStyle}>{index + 1}</td>
 
-      {/* Modal Tambah/Edit */}
+                <td style={tdStyle}>
+                  {item.seminar_name}
+                </td>
+
+                <td style={tdStyle}>
+                  {item.category?.category_name}
+                </td>
+
+                <td style={tdStyle}>
+                  {item.level?.nama_level}
+                </td>
+
+                <td style={tdStyle}>
+                  {new Date(item.tanggal).toLocaleDateString("id-ID")}
+                </td>
+
+                <td style={tdStyle}>
+                  Rp {Number(item.harga).toLocaleString("id-ID")}
+                </td>
+
+                <td style={tdStyle}>
+                  {item.kuota_tersedia}
+                </td>
+
+                <td style={tdStyle}>
+                  <button
+                    onClick={() => openEdit(item)}
+                    style={editButton}
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => setDeleteId(item.id)}
+                    style={deleteButton}
+                  >
+                    Hapus
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+            {/* Modal Tambah / Edit */}
       {showModal && (
-        <div style={{
-          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100
-        }}>
-          <div style={{
-            backgroundColor: 'white', borderRadius: '12px',
-            padding: '32px', width: '100%', maxWidth: '540px',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-            maxHeight: '90vh', overflowY: 'auto'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1f2937' }}>
-                {editData ? 'Edit Event' : 'Tambah Event'}
-              </h2>
-              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                <X size={20} color="#6b7280" />
-              </button>
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,.4)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              width: "500px",
+              borderRadius: "10px",
+              padding: "25px",
+            }}
+          >
+            <h2 style={{ marginTop: 0 }}>
+              {editData ? "Edit Seminar" : "Tambah Seminar"}
+            </h2>
+
+            {/* Nama Seminar */}
+            <div style={{ marginBottom: "15px" }}>
+              <label>Nama Seminar</label>
+
+              <input
+                type="text"
+                value={form.seminar_name}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    seminar_name: e.target.value,
+                  })
+                }
+                style={inputStyle}
+              />
             </div>
 
-            {/* Form Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            {/* Tanggal */}
+            <div style={{ marginBottom: "15px" }}>
+              <label>Tanggal</label>
 
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Judul Event</label>
-                <input
-                  value={form.title}
-                  onChange={e => setForm({ ...form, title: e.target.value })}
-                  placeholder="contoh: Workshop Web Development"
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Kategori</label>
-                <select
-                  value={form.category}
-                  onChange={e => setForm({ ...form, category: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}>
-                  <option value="">Pilih Kategori</option>
-                  {categories.map(c => (
-  <option key={c.id} value={c.id}>
-    {c.nama}
-  </option>
-))}
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Speaker</label>
-                <select
-                  value={form.speaker}
-                  onChange={e => setForm({ ...form, speaker: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}>
-                  <option value="">Pilih Speaker</option>
-                  {speakers.map(s => (
-  <option key={s.id} value={s.id}>
-    {s.nama}
-  </option>
-))}
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Tanggal</label>
-                <input
-                  type="date"
-                  value={form.date}
-                  onChange={e => setForm({ ...form, date: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Waktu</label>
-                <input
-                  value={form.time}
-                  onChange={e => setForm({ ...form, time: e.target.value })}
-                  placeholder="contoh: 09.00 - 12.00"
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Lokasi</label>
-                <input
-                  value={form.location}
-                  onChange={e => setForm({ ...form, location: e.target.value })}
-                  placeholder="contoh: Aula Gedung A"
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Kuota</label>
-                <input
-                  type="number"
-                  value={form.kuota}
-                  onChange={e => setForm({ ...form, kuota: e.target.value })}
-                  placeholder="contoh: 50"
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Harga (Rp)</label>
-                <input
-                  type="number"
-                  value={form.harga}
-                  onChange={e => setForm({ ...form, harga: e.target.value })}
-                  placeholder="0 = Gratis"
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '6px' }}>Status</label>
-                <select
-                  value={form.status}
-                  onChange={e => setForm({ ...form, status: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}>
-                  <option value="Draft">Draft</option>
-                  <option value="Aktif">Aktif</option>
-                </select>
-              </div>
-
+              <input
+                type="date"
+                value={form.tanggal}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    tanggal: e.target.value,
+                  })
+                }
+                style={inputStyle}
+              />
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+            {/* Harga */}
+            <div style={{ marginBottom: "15px" }}>
+              <label>Harga</label>
+
+              <input
+                type="number"
+                value={form.harga}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    harga: e.target.value,
+                  })
+                }
+                style={inputStyle}
+              />
+            </div>
+
+            {/* Kuota */}
+            <div style={{ marginBottom: "15px" }}>
+              <label>Kuota</label>
+
+              <input
+                type="number"
+                value={form.kuota_tersedia}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    kuota_tersedia: e.target.value,
+                  })
+                }
+                style={inputStyle}
+              />
+            </div>
+
+            {/* Kategori */}
+            <div style={{ marginBottom: "15px" }}>
+              <label>Kategori</label>
+
+              <select
+                value={form.id_category}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    id_category: e.target.value,
+                  })
+                }
+                style={inputStyle}
+              >
+                <option value="">Pilih Kategori</option>
+
+                {categories.map((cat) => (
+                  <option
+                    key={cat.id}
+                    value={cat.id}
+                  >
+                    {cat.category_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Level */}
+            <div style={{ marginBottom: "20px" }}>
+              <label>Level</label>
+
+              <select
+                value={form.id_level}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    id_level: e.target.value,
+                  })
+                }
+                style={inputStyle}
+              >
+                <option value="">Pilih Level</option>
+
+                {levels.map((lvl) => (
+                  <option
+                    key={lvl.id}
+                    value={lvl.id}
+                  >
+                    {lvl.nama_level}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "10px",
+              }}
+            >
               <button
                 onClick={() => setShowModal(false)}
                 style={{
-                  flex: 1, padding: '10px', borderRadius: '8px',
-                  border: '1px solid #d1d5db', backgroundColor: 'white',
-                  cursor: 'pointer', fontWeight: '600', fontSize: '13px', color: '#374151'
-                }}>
+                  padding: "10px 18px",
+                  border: "1px solid #ccc",
+                  borderRadius: "6px",
+                  background: "white",
+                  cursor: "pointer",
+                }}
+              >
                 Batal
               </button>
+
               <button
                 onClick={handleSave}
                 style={{
-                  flex: 1, padding: '10px', borderRadius: '8px',
-                  border: 'none', backgroundColor: '#8b1e2b',
-                  cursor: 'pointer', fontWeight: '600', fontSize: '13px', color: 'white',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
-                }}>
-                <Check size={16} /> Simpan
+                  padding: "10px 18px",
+                  border: "none",
+                  borderRadius: "6px",
+                  background: "#8b1e2b",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              >
+                Simpan
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal Delete */}
+      {/* Modal Hapus */}
       {deleteId && (
-        <div style={{
-          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100
-        }}>
-          <div style={{
-            backgroundColor: 'white', borderRadius: '12px',
-            padding: '32px', width: '100%', maxWidth: '380px',
-            textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.15)'
-          }}>
-            <div style={{
-              width: '56px', height: '56px', borderRadius: '50%',
-              backgroundColor: '#fef2f2', margin: '0 auto 16px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <Trash2 size={24} color="#ef4444" />
-            </div>
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>Hapus Event?</h2>
-            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '24px' }}>
-              Data event ini akan dihapus permanen dan tidak bisa dikembalikan.
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,.4)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "10px",
+              width: "350px",
+              textAlign: "center",
+            }}
+          >
+            <h3>Hapus Seminar?</h3>
+
+            <p>
+              Apakah Anda yakin ingin menghapus seminar ini?
             </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                marginTop: "20px",
+              }}
+            >
               <button
                 onClick={() => setDeleteId(null)}
                 style={{
-                  flex: 1, padding: '10px', borderRadius: '8px',
-                  border: '1px solid #d1d5db', backgroundColor: 'white',
-                  cursor: 'pointer', fontWeight: '600', fontSize: '13px', color: '#374151'
-                }}>
+                  flex: 1,
+                  padding: "10px",
+                  border: "1px solid #ccc",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
                 Batal
               </button>
+
               <button
                 onClick={() => handleDelete(deleteId)}
                 style={{
-                  flex: 1, padding: '10px', borderRadius: '8px',
-                  border: 'none', backgroundColor: '#ef4444',
-                  cursor: 'pointer', fontWeight: '600', fontSize: '13px', color: 'white'
-                }}>
+                  flex: 1,
+                  padding: "10px",
+                  background: "#dc2626",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
                 Hapus
               </button>
             </div>
@@ -488,7 +617,8 @@ const fetchSpeakers = async () => {
       )}
 
     </div>
+    </div>
   );
 };
 
-export default EventList;
+export default SeminarList;

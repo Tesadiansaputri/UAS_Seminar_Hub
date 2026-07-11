@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `speaker` ADD COLUMN `rating` DOUBLE NOT NULL DEFAULT 0;
