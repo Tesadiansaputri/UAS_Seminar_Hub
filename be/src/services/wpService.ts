@@ -1,4 +1,5 @@
 import { prisma } from "../lib/db.js";
+import { getSkor } from "./sawService.js";
 
 export async function hitungWP(userId: number) {
   const bobot = await prisma.bobot.findFirst({
@@ -50,31 +51,49 @@ export async function hitungWP(userId: number) {
   // Hitung Vektor S
   // =====================
 
-  const nilaiS = seminar.map((s) => {
+  const nilaiS = [];
 
-    const rating =
-      s.speakers.length > 0
-        ? s.speakers.reduce(
-            (a, b) => a + b.speaker.rating,
-            0
-          ) / s.speakers.length
-        : 0;
+for (const s of seminar) {
 
-    const fasilitas = s.fasilitas.length;
+ const rating =
+  s.speakers.length > 0
+    ? s.speakers[0]?.speaker?.rating ?? 0
+    : 0;
 
-    const S =
-      Math.pow(Number(s.harga), wHarga) *
-      Math.pow(s.kuota_tersedia, wKuota) *
-      Math.pow(rating, wRating) *
-      Math.pow(s.level.nilai_level, wLevel) *
-      Math.pow(fasilitas, wFasilitas);
+  const totalFasilitas = s.fasilitas.reduce<number>(
+    (total, f) => total + (f.fasilitas?.nilai_fasilitas ?? 0),
+    0
+  );
 
-    return {
-      seminarId: s.id,
-      nama: s.seminar_name,
-      S,
-    };
+  let kategoriFasilitas = 1;
+
+  if (totalFasilitas >= 9) kategoriFasilitas = 5;
+  else if (totalFasilitas >= 7) kategoriFasilitas = 4;
+  else if (totalFasilitas >= 5) kategoriFasilitas = 3;
+  else if (totalFasilitas >= 3) kategoriFasilitas = 2;
+
+  const hargaSkor = await getSkor("Harga", Number(s.harga));
+  const kuotaSkor = await getSkor("Kuota", s.kuota_tersedia);
+  const ratingSkor = await getSkor("Rating", rating);
+  const levelSkor = await getSkor("Level", s.level.nama_level);
+  const fasilitasSkor = await getSkor(
+    "Fasilitas",
+    kategoriFasilitas
+  );
+
+  const S =
+    Math.pow(hargaSkor, wHarga) *
+    Math.pow(kuotaSkor, wKuota) *
+    Math.pow(ratingSkor, wRating) *
+    Math.pow(levelSkor, wLevel) *
+    Math.pow(fasilitasSkor, wFasilitas);
+
+  nilaiS.push({
+    seminarId: s.id,
+    nama: s.seminar_name,
+    S,
   });
+}
 
   // =====================
   // Hitung Vektor V

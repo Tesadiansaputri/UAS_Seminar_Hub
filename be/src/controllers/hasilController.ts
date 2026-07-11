@@ -249,6 +249,8 @@ export const calculateHasil = async (
         break;
 
       default:
+
+      
         return res.status(400).json({
           error: "Metode harus SAW, WP, atau TOPSIS.",
         });

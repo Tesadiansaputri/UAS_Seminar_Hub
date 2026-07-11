@@ -129,12 +129,12 @@ export default function Recommendation() {
 
       bobot_rating:
         preferences.find(
-          p => kriteria.find(k => k.id === p.kriteriaId)?.nama === "Rating"
+          p => kriteria.find(k => k.id === p.kriteriaId)?.nama === "Rating Pembicara"
         )?.bobot || 0,
 
       bobot_level:
         preferences.find(
-          p => kriteria.find(k => k.id === p.kriteriaId)?.nama === "Level"
+          p => kriteria.find(k => k.id === p.kriteriaId)?.nama === "Level Seminar"
         )?.bobot || 0,
 
       bobot_fasilitas:
