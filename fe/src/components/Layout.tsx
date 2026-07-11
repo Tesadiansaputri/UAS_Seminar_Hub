@@ -51,8 +51,8 @@ const adminMenus = [
     path: "/admin/level",
   },
   {
-    label: "Kelola Kriteria",
-    path: "/admin/kriteria",
+    label: "Kelola Perhitungan SPK",
+    path: "/admin/perhitungan-spk",
     icon: <Settings size={18} />,
 },
 {
