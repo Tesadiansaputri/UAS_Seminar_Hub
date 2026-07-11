@@ -57,9 +57,10 @@ const Hasil = () => {
 
     try {
       const res = await api.get(
-        `/hasil/calculate/${user.id}?metode=${metode}`
-      );
-      setHasil(res.data);
+  `/hasil/hitung/${user.id}?metode=${metode}`
+);
+
+setHasil(res.data.data);
     } catch (err: any) {
       setError(
         err?.response?.data?.error ||
@@ -91,7 +92,7 @@ const Hasil = () => {
             </p>
           </div>
           <button
-            onClick={() => navigate("/bobot")}
+            onClick={() => navigate("/recommendation")}
             className="bg-white border border-red-900 text-red-900 px-5 py-2.5 rounded-lg font-semibold hover:bg-red-50"
           >
             Ubah Bobot

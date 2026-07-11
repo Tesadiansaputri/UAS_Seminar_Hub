@@ -12,6 +12,8 @@ import speakerSeminarRoute from "./routes/speakerSeminarRoute.js";
 import fasilitasRoute from "./routes/fasilitasRoute.js";
 import kelengkapanFasilitasRoute from "./routes/kelengkapanFasilitasRoute.js"
 import ratingPembicaraRoute from "./routes/ratingPembicaraRoute.js";
+import kriteriaRoutes from "./routes/kriteriaRoute.js";
+import subKriteriaRoutes from "./routes/perhitunganSPKRoute.js";
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
@@ -39,6 +41,8 @@ app.use("/kelengkapan-fasilitas", kelengkapanFasilitasRoute);
 app.use("/rating-pembicara", ratingPembicaraRoute);
 app.use("/bobot", bobotRoute);
 app.use("/hasil", hasilRoute);
+app.use("/kriteria", kriteriaRoutes);
+app.use("/sub-kriteria", subKriteriaRoutes);
 
 
 
