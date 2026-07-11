@@ -218,11 +218,15 @@ model Bobot{
   @@map("bobot")
 }
 model SubKriteria {
-
   id Int @id @default(autoincrement())
 
   jenis String
+
   nama String
+
+  min Float?
+  max Float?
+
   nilai Float
 
   @@map("sub_kriteria")

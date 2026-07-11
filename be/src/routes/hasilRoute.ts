@@ -1,7 +1,6 @@
 import { Router } from "express";
-
 import {
-  getAllHasil,
+  getAllHasil,  
   getHasilById,
   createHasil,
   updateHasilById,
@@ -11,10 +10,12 @@ import {
 
 const router = Router();
 
-// ==============================
-// CRUD HASIL
-// ==============================
+// ROUTE SPK HARUS PALING ATAS
+router.get("/hitung/:userId", calculateHasil);
 
+
+
+// CRUD
 router.get("/", getAllHasil);
 
 router.get("/:id", getHasilById);
@@ -24,11 +25,5 @@ router.post("/", createHasil);
 router.put("/:id", updateHasilById);
 
 router.delete("/:id", deleteHasilById);
-
-// ==============================
-// HITUNG SAW
-// ==============================
-
-router.get("/hitung/:userId", calculateHasil);
 
 export default router;

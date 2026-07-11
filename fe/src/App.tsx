@@ -15,7 +15,7 @@ import LandingPage from "./pages/user/LandingPage";
 import Home from "./pages/user/Home";
 import UserSeminarList from "./pages/user/SeminarList";
 import Profile from "./pages/user/Profile";
-import Bobot from "./pages/user/Bobot";
+import Recommendation from "./pages/user/Recommendation";
 import Hasil from "./pages/user/Hasil";
 
 
@@ -37,9 +37,9 @@ import SuperAdminDashboard from "./pages/super_admin/Dashboard";
 import DetailSeminar from "./pages/user/DetailSeminar";
 import LevelList from "./pages/admin/LevelList";
 import FasilitasList from "./pages/admin/FasilitasList";
-import KriteriaList from "./pages/admin/PerhitunganSPK";
 import BobotList from "./pages/admin/BobotList";
 import PerhitunganSPK from "./pages/admin/PerhitunganSPK";
+
 
 function App() {
   return (
@@ -52,6 +52,10 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+
+
+
 
           {/* ================= USER ================= */}
 
@@ -101,11 +105,11 @@ function App() {
           
 
            <Route
-            path="/bobot"
+            path="/recommendation"
             element={
               <ProtectedRoute role="USER">
                 <UserLayout>
-                  <Bobot />
+                  <Recommendation />
                 </UserLayout>
               </ProtectedRoute>
             }
