@@ -8,263 +8,164 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//////////////////////////////////////////////////
-// USER
-//////////////////////////////////////////////////
-
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int               @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String            @unique
   password  String
-  role      String   @default("USER")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  bobots   Bobot[]
-  hasil    Hasil[]
-  ratings  RatingPembicara[]
+  role      String            @default("USER")
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+  bobots    Bobot[]
+  hasil     Hasil[]
+  ratings   RatingPembicara[]
 
   @@map("users")
 }
 
-//////////////////////////////////////////////////
-// CATEGORY
-//////////////////////////////////////////////////
-
 model Category {
-  id            Int      @id @default(autoincrement()) @map("id_category")
+  id            Int       @id @default(autoincrement()) @map("id_category")
   category_name String
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  seminars Seminar[]
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  seminars      Seminar[]
 
   @@map("category")
 }
 
-//////////////////////////////////////////////////
-// LEVEL
-//////////////////////////////////////////////////
-
 model Level {
-
-  id Int @id @default(autoincrement())
-
-  nama_level String
+  id          Int       @id @default(autoincrement())
+  nama_level  String
   nilai_level Int
-
-  seminars Seminar[]
+  seminars    Seminar[]
 
   @@map("level")
 }
 
-//////////////////////////////////////////////////
-// PEMBICARA
-//////////////////////////////////////////////////
-
 model Speaker {
-
-  id Int @id @default(autoincrement())
-
-  nama String
-  email String @unique
+  id              Int               @id @default(autoincrement())
+  nama            String
+  email           String            @unique
   bidang_keahlian String
-
-  rating Float @default(0)
-
-  seminar SpeakerSeminar[]
-
-  ratings RatingPembicara[]
+  rating          Float             @default(0)
+  seminar         SpeakerSeminar[]
+  ratings         RatingPembicara[]
 
   @@map("speaker")
 }
 
-//////////////////////////////////////////////////
-// SEMINAR
-//////////////////////////////////////////////////
-
 model Seminar {
-
-  id Int @id @default(autoincrement()) @map("id_seminar")
-
-  seminar_name String
-
-  tanggal DateTime
-
-  harga BigInt
-
+  id             Int                    @id @default(autoincrement()) @map("id_seminar")
+  seminar_name   String
+  tanggal        DateTime
+  harga          BigInt
   kuota_tersedia Int
+  id_category    Int
+  id_level       Int
+  hasil          Hasil[]
+  fasilitas      KelengkapanFasilitas[]
+  speakers       SpeakerSeminar[]
+  category       Category               @relation(fields: [id_category], references: [id])
+  level          Level                  @relation(fields: [id_level], references: [id])
 
-  id_category Int
-
-  id_level Int
-
-  category Category @relation(fields:[id_category],references:[id])
-
-  level Level @relation(fields:[id_level],references:[id])
-
-  speakers SpeakerSeminar[]
-
-  fasilitas KelengkapanFasilitas[]
-
-  hasil Hasil[]
-
+  @@index([id_category], map: "seminar_id_category_fkey")
+  @@index([id_level], map: "seminar_id_level_fkey")
   @@map("seminar")
 }
 
-//////////////////////////////////////////////////
-// MANY TO MANY PEMBICARA
-//////////////////////////////////////////////////
-
-model SpeakerSeminar{
-
-  id Int @id @default(autoincrement())
-
+model SpeakerSeminar {
+  id        Int     @id @default(autoincrement())
   seminarId Int
-
   speakerId Int
+  seminar   Seminar @relation(fields: [seminarId], references: [id])
+  speaker   Speaker @relation(fields: [speakerId], references: [id])
 
-  seminar Seminar @relation(fields:[seminarId],references:[id])
-
-  speaker Speaker @relation(fields:[speakerId],references:[id])
-
+  @@index([seminarId], map: "pengisi_materi_seminarId_fkey")
+  @@index([speakerId], map: "pengisi_materi_speakerId_fkey")
   @@map("pengisi_materi")
 }
 
-//////////////////////////////////////////////////
-// FASILITAS
-//////////////////////////////////////////////////
-
-model Fasilitas{
-
-  id Int @id @default(autoincrement())
-
-  nama_fasilitas String
-
+model Fasilitas {
+  id              Int                    @id @default(autoincrement())
+  nama_fasilitas  String
   nilai_fasilitas Int
-
-  seminar KelengkapanFasilitas[]
+  seminar         KelengkapanFasilitas[]
 
   @@map("fasilitas")
 }
 
-//////////////////////////////////////////////////
-// MANY TO MANY SEMINAR FASILITAS
-//////////////////////////////////////////////////
-
-model KelengkapanFasilitas{
-
-  seminarId Int
-
+model KelengkapanFasilitas {
+  seminarId   Int
   fasilitasId Int
+  fasilitas   Fasilitas @relation(fields: [fasilitasId], references: [id])
+  seminar     Seminar   @relation(fields: [seminarId], references: [id])
 
-  seminar Seminar @relation(fields:[seminarId],references:[id])
-
-  fasilitas Fasilitas @relation(fields:[fasilitasId],references:[id])
-
-  @@id([seminarId,fasilitasId])
-
+  @@id([seminarId, fasilitasId])
+  @@index([fasilitasId], map: "kelengkapan_fasilitas_fasilitasId_fkey")
   @@map("kelengkapan_fasilitas")
 }
 
-//////////////////////////////////////////////////
-// RATING PEMBICARA
-//////////////////////////////////////////////////
-
-model RatingPembicara{
-
-  id Int @id @default(autoincrement())
-
-  rating Float
-
-  userId Int
-
+model RatingPembicara {
+  id        Int     @id @default(autoincrement())
+  rating    Float
+  userId    Int
   speakerId Int
+  speaker   Speaker @relation(fields: [speakerId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
 
-  user User @relation(fields:[userId],references:[id])
-
-  speaker Speaker @relation(fields:[speakerId],references:[id])
-
+  @@index([speakerId], map: "rating_pembicara_speakerId_fkey")
+  @@index([userId], map: "rating_pembicara_userId_fkey")
   @@map("rating_pembicara")
 }
 
-//////////////////////////////////////////////////
-// BOBOT USER
-//////////////////////////////////////////////////
-
-model Bobot{
-
-  id Int @id @default(autoincrement())
-
-  userId Int
-
-  bobot_harga Float
-
-  bobot_kuota Float
-
-  bobot_rating Float
-
-  bobot_level Float
-
+model Bobot {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  bobot_harga     Float
+  bobot_kuota     Float
+  bobot_rating    Float
   bobot_fasilitas Float
+  createdAt       DateTime @default(now())
+  bobot_level     Float
+  user            User     @relation(fields: [userId], references: [id])
 
-  createdAt DateTime @default(now())
-
-  user User @relation(fields:[userId],references:[id])
-
+  @@index([userId], map: "bobot_userId_fkey")
   @@map("bobot")
 }
+
 model SubKriteria {
-  id Int @id @default(autoincrement())
-
+  id    Int    @id @default(autoincrement())
   jenis String
-
-  nama String
-
-  min Float?
-  max Float?
-
+  nama  String
   nilai Float
+  max   Float?
+  min   Float?
 
   @@map("sub_kriteria")
 }
 
-//////////////////////////////////////////////////
-// HASIL SPK
-//////////////////////////////////////////////////
-
-model Hasil{
-
-  id Int @id @default(autoincrement())
-
-  userId Int
-
+model Hasil {
+  id        Int      @id @default(autoincrement())
+  userId    Int
   seminarId Int
-
-  metode String
-
-  nilai Float
-
-  ranking Int
-
+  metode    String
+  nilai     Float
+  ranking   Int
   createdAt DateTime @default(now())
+  seminar   Seminar  @relation(fields: [seminarId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  user User @relation(fields:[userId],references:[id])
-
-  seminar Seminar @relation(fields:[seminarId],references:[id])
-
+  @@index([seminarId], map: "hasil_seminarId_fkey")
+  @@index([userId], map: "hasil_userId_fkey")
   @@map("hasil")
 }
 
 model Kriteria {
-  id      Int    @id @default(autoincrement())
-  kode    String @unique
-  nama    String
-  jenis   String
-  sumber  String
+  id     Int    @id @default(autoincrement())
+  kode   String @unique
+  nama   String
+  jenis  String
+  sumber String
 
   @@map("kriteria")
 }

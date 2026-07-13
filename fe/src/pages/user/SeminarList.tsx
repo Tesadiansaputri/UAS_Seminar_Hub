@@ -36,7 +36,7 @@ const SeminarList = () => {
 
   const getSeminars = async () => {
     try {
-      const res = await api.get("/seminars");
+      const res = await api.get("/seminar");
       setSeminars(res.data);
       setFiltered(res.data);
     } catch (err) {

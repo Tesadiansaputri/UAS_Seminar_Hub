@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Star } from "lucide-react";
 import api from "../../services/api";
 
 interface Seminar {
@@ -18,11 +19,12 @@ interface Seminar {
   };
 
   speakers: {
-    speaker: {
-      nama: string;
-      bidang_keahlian: string;
-    };
-  }[];
+  speaker: {
+    nama: string;
+    bidang_keahlian: string;
+    rating: number;
+  };
+}[];
 
   fasilitas: {
     fasilitas: {
@@ -44,7 +46,7 @@ const DetailSeminar = () => {
 
   const getDetail = async () => {
     try {
-      const res = await api.get(`/seminars/${id}`);
+      const res = await api.get(`/seminar/${id}`);
       setSeminar(res.data);
     } catch (error) {
       console.log(error);
@@ -116,18 +118,57 @@ const DetailSeminar = () => {
               Pembicara
             </h2>
 
-            <ul className="list-disc ml-5 mb-6">
-              {seminar.speakers?.length ? (
-                seminar.speakers.map((item, index) => (
-                  <li key={index}>
-                    {item.speaker.nama} ({item.speaker.bidang_keahlian})
-                  </li>
-                ))
-              ) : (
-                <li>Belum ada pembicara</li>
-              )}
-            </ul>
+           <ul className="space-y-5 mb-6">
 
+  {seminar.speakers?.length ? (
+
+    seminar.speakers.map((item, index) => (
+
+      <li key={index} className="mb-5">
+
+  <p className="font-semibold text-xl text-black">
+    {item.speaker.nama}
+  </p>
+
+  <p className="text-gray-600">
+    {item.speaker.bidang_keahlian}
+  </p>
+
+  <div className="flex items-center gap-2 mt-1">
+
+    <div className="flex">
+
+      {[1,2,3,4,5].map((star)=>(
+        <Star
+          key={star}
+          size={18}
+          className={
+            star <= item.speaker.rating
+              ? "fill-yellow-400 text-yellow-400"
+              : "text-gray-300"
+          }
+        />
+      ))}
+
+    </div>
+
+    <span className="text-gray-500 text-sm">
+      ({item.speaker.rating}/5)
+    </span>
+
+  </div>
+
+</li>
+
+    ))
+
+  ) : (
+
+    <li>Belum ada pembicara</li>
+
+  )}
+
+</ul>
             <h2 className="text-2xl font-semibold mb-4">
               Fasilitas
             </h2>
@@ -151,14 +192,14 @@ const DetailSeminar = () => {
         <div className="flex justify-end gap-4 mt-10">
 
           <button
-            onClick={() => navigate("/seminars")}
+            onClick={() => navigate("/seminar")}
             className="px-6 py-3 rounded-lg bg-gray-500 text-white hover:bg-gray-600"
           >
             Kembali
           </button>
 
           <button
-            onClick={() => navigate("/bobot")}
+            onClick={() => navigate("/recommendation")}
             className="px-6 py-3 rounded-lg bg-red-900 text-white hover:bg-red-800"
           >
             Gunakan Seminar Ini

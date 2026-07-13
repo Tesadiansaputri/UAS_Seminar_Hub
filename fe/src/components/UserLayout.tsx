@@ -29,7 +29,7 @@ const userMenus = [
   {
     icon: <LayoutGrid size={18} />,
     label: 'Seminar',
-    path: '/seminars',
+    path: '/seminar',
   },
   {
     icon: <User size={18} />,

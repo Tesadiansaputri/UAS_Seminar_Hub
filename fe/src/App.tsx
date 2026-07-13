@@ -21,6 +21,7 @@ import Hasil from "./pages/user/Hasil";
 
 
 
+
 // import Bobot from "./pages/user/Bobot";
 // import Hasil from "./pages/user/Hasil";
 
@@ -73,7 +74,7 @@ function App() {
           />
 
           <Route
-            path="/seminars"
+            path="/seminar"
             element={
               <ProtectedRoute role="USER">
                 <UserLayout>
