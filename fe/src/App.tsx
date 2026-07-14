@@ -21,6 +21,7 @@ import Hasil from "./pages/user/Hasil";
 
 
 
+
 // import Bobot from "./pages/user/Bobot";
 // import Hasil from "./pages/user/Hasil";
 
@@ -35,6 +36,8 @@ import SeminarListAdmin from "./pages/admin/SeminarList";
 // Super Admin
 import SuperAdminDashboard from "./pages/super_admin/Dashboard";
 import DetailSeminar from "./pages/user/DetailSeminar";
+import AdminList from "./pages/super_admin/AdminList";
+import UserList from "./pages/super_admin/UserList";
 import LevelList from "./pages/admin/LevelList";
 import FasilitasList from "./pages/admin/FasilitasList";
 import BobotList from "./pages/admin/BobotList";
@@ -71,7 +74,7 @@ function App() {
           />
 
           <Route
-            path="/seminars"
+            path="/seminar"
             element={
               <ProtectedRoute role="USER">
                 <UserLayout>
@@ -105,7 +108,7 @@ function App() {
           
 
            <Route
-            path="/recommendation"
+            path="/recommendation" 
             element={
               <ProtectedRoute role="USER">
                 <UserLayout>
@@ -115,7 +118,7 @@ function App() {
             }
           /> 
 
-           /<Route
+           <Route
             path="/hasil"
             element={
               <ProtectedRoute role="USER">
@@ -253,9 +256,25 @@ function App() {
             path="/super-admin/dashboard"
             element={
               <ProtectedRoute role="SUPER_ADMIN">
-                <Layout>
-                  <SuperAdminDashboard />
-                </Layout>
+                <SuperAdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/super-admin/admin"
+            element={
+              <ProtectedRoute role="SUPER_ADMIN">
+                <AdminList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/super-admin/user"
+            element={
+              <ProtectedRoute role="SUPER_ADMIN">
+                <UserList />
               </ProtectedRoute>
             }
           />

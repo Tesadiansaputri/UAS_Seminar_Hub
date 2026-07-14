@@ -80,6 +80,7 @@ for (const s of seminar) {
     "Fasilitas",
     kategoriFasilitas
   );
+<<<<<<< HEAD
   console.table({
   Seminar: s.seminar_name,
   Harga: hargaSkor,
@@ -88,6 +89,8 @@ for (const s of seminar) {
   Level: levelSkor,
   Fasilitas: fasilitasSkor,
 });
+=======
+>>>>>>> 2a804531b307a9c706d0d1e6ef56240b5c9a79a6
 
   const S =
     Math.pow(hargaSkor, wHarga) *
@@ -95,10 +98,13 @@ for (const s of seminar) {
     Math.pow(ratingSkor, wRating) *
     Math.pow(levelSkor, wLevel) *
     Math.pow(fasilitasSkor, wFasilitas);
+<<<<<<< HEAD
     console.log({
   seminar: s.seminar_name,
   S,
 });
+=======
+>>>>>>> 2a804531b307a9c706d0d1e6ef56240b5c9a79a6
 
   nilaiS.push({
     seminarId: s.id,

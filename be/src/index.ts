@@ -35,7 +35,7 @@ app.use("/categories", categoryRoute);
 app.use("/levels", levelRoute);
 app.use("/speaker", speakerRoute);
 app.use("/seminar", seminarRoute);
-app.use("/speaker-seminars", speakerSeminarRoute);
+app.use("/speaker-seminar", speakerSeminarRoute);
 app.use("/fasilitas", fasilitasRoute);
 app.use("/kelengkapan-fasilitas", kelengkapanFasilitasRoute);
 app.use("/rating-pembicara", ratingPembicaraRoute);
