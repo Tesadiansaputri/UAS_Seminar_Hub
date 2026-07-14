@@ -1,4 +1,5 @@
 import { prisma } from "../lib/db.js";
+import { getSkor } from "./sawService.js";
 
 export async function hitungWP(userId: number) {
   const bobot = await prisma.bobot.findFirst({
@@ -50,31 +51,61 @@ export async function hitungWP(userId: number) {
   // Hitung Vektor S
   // =====================
 
-  const nilaiS = seminar.map((s) => {
+  const nilaiS = [];
 
-    const rating =
-      s.speakers.length > 0
-        ? s.speakers.reduce(
-            (a, b) => a + b.speaker.rating,
-            0
-          ) / s.speakers.length
-        : 0;
+for (const s of seminar) {
 
-    const fasilitas = s.fasilitas.length;
+ const rating =
+  s.speakers.length > 0
+    ? s.speakers[0]?.speaker?.rating ?? 0
+    : 0;
 
-    const S =
-      Math.pow(Number(s.harga), wHarga) *
-      Math.pow(s.kuota_tersedia, wKuota) *
-      Math.pow(rating, wRating) *
-      Math.pow(s.level.nilai_level, wLevel) *
-      Math.pow(fasilitas, wFasilitas);
+  const totalFasilitas = s.fasilitas.reduce<number>(
+    (total, f) => total + (f.fasilitas?.nilai_fasilitas ?? 0),
+    0
+  );
 
-    return {
-      seminarId: s.id,
-      nama: s.seminar_name,
-      S,
-    };
+  let kategoriFasilitas = 1;
+
+  if (totalFasilitas >= 9) kategoriFasilitas = 5;
+  else if (totalFasilitas >= 7) kategoriFasilitas = 4;
+  else if (totalFasilitas >= 5) kategoriFasilitas = 3;
+  else if (totalFasilitas >= 3) kategoriFasilitas = 2;
+
+  const hargaSkor = await getSkor("Harga", Number(s.harga));
+  const kuotaSkor = await getSkor("Kuota", s.kuota_tersedia);
+  const ratingSkor = await getSkor("Rating", rating);
+  const levelSkor = await getSkor("Level", s.level.nama_level);
+  const fasilitasSkor = await getSkor(
+    "Fasilitas",
+    kategoriFasilitas
+  );
+  console.table({
+  Seminar: s.seminar_name,
+  Harga: hargaSkor,
+  Kuota: kuotaSkor,
+  Rating: ratingSkor,
+  Level: levelSkor,
+  Fasilitas: fasilitasSkor,
+});
+
+  const S =
+    Math.pow(hargaSkor, wHarga) *
+    Math.pow(kuotaSkor, wKuota) *
+    Math.pow(ratingSkor, wRating) *
+    Math.pow(levelSkor, wLevel) *
+    Math.pow(fasilitasSkor, wFasilitas);
+    console.log({
+  seminar: s.seminar_name,
+  S,
+});
+
+  nilaiS.push({
+    seminarId: s.id,
+    nama: s.seminar_name,
+    S,
   });
+}
 
   // =====================
   // Hitung Vektor V
@@ -83,16 +114,16 @@ export async function hitungWP(userId: number) {
   const totalS = nilaiS.reduce((a, b) => a + b.S, 0);
 
   const hasil = nilaiS
-    .map((x) => ({
-      seminarId: x.seminarId,
-      nama: x.nama,
-      nilai: x.S / totalS,
-    }))
-    .sort((a, b) => b.nilai - a.nilai)
-    .map((x, index) => ({
-      ...x,
-      ranking: index + 1,
-    }));
+  .map((x) => ({
+    seminarId: x.seminarId,
+    nama: x.nama,
+    nilai: Number((x.S / totalS).toFixed(6)),
+  }))
+  .sort((a, b) => b.nilai - a.nilai)
+  .map((x, index) => ({
+    ...x,
+    ranking: index + 1,
+  }));
 
-  return hasil;
+return hasil;
 }

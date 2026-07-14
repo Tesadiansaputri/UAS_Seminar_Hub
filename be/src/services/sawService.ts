@@ -1,6 +1,6 @@
 import { prisma } from "../lib/db.js";
 
-async function getSkor(
+export async function getSkor(
   jenis: string,
   value: number | string
 ): Promise<number> {
@@ -44,10 +44,13 @@ async function getSkor(
 
 export async function hitungSAW(userId: number) {
   const bobot = await prisma.bobot.findFirst({
-    where: {
-      userId,
-    },
-  });
+  where: {
+    userId,
+  },
+  orderBy: {
+    createdAt: "desc",
+  },
+});
 
   if (!bobot) {
     throw new Error("Bobot belum diinput.");
@@ -77,40 +80,44 @@ export async function hitungSAW(userId: number) {
 
   for (const s of seminars) {
     const rating =
-      s.speakers.length > 0
-        ? s.speakers[0]?.speaker?.rating ?? 0
+  s.speakers.length > 0
+    ? s.speakers.reduce(
+        (total, sp) => total + sp.speaker.rating,
+        0
+      ) / s.speakers.length
+    : 0;
+console.log({
+  seminar: s.seminar_name,
+  rating,
+  jumlahSpeaker: s.speakers.length,
+});
+    const fasilitasSkor =
+      s.fasilitas.length > 0
+        ? s.fasilitas[0]?.fasilitas?.nilai_fasilitas ?? 0
         : 0;
-
-    const totalFasilitas = s.fasilitas.reduce<number>(
-      (total, f) => total + f.fasilitas.nilai_fasilitas,
-      0
-    );
-
-    let kategoriFasilitas = 1;
-    if (totalFasilitas >= 9) kategoriFasilitas = 5;
-    else if (totalFasilitas >= 7) kategoriFasilitas = 4;
-    else if (totalFasilitas >= 5) kategoriFasilitas = 3;
-    else if (totalFasilitas >= 3) kategoriFasilitas = 2;
-
-    const fasilitasSkor = await getSkor(
-      "Fasilitas",
-      kategoriFasilitas
-    );
 
     const hargaSkor = await getSkor("Harga", Number(s.harga));
     const kuotaSkor = await getSkor("Kuota", s.kuota_tersedia);
     const ratingSkor = await getSkor("Rating", rating);
     const levelSkor = await getSkor("Level", s.level.nama_level);
+    console.log({
+  seminar: s.seminar_name,
+  hargaSkor,
+  kuotaSkor,
+  ratingSkor,
+  levelSkor,
+  fasilitasSkor,
+});
 
     data.push({
-      seminarId: s.id,
-      nama: s.seminar_name,
-      harga: hargaSkor,
-      kuota: kuotaSkor,
-      rating: ratingSkor,
-      level: levelSkor,
-      fasilitas: fasilitasSkor,
-    });
+  seminarId: s.id,
+  nama: s.seminar_name,
+  harga: hargaSkor,
+  kuota: kuotaSkor,
+  rating: ratingSkor,
+  level: levelSkor,
+  fasilitas: fasilitasSkor,
+});
     console.table({
   Seminar: s.seminar_name,
   Harga: hargaSkor,
@@ -134,19 +141,38 @@ export async function hitungSAW(userId: number) {
     const c3 = maxRating ? d.rating / maxRating : 0;
     const c4 = maxLevel ? d.level / maxLevel : 0;
     const c5 = maxFasilitas ? d.fasilitas / maxFasilitas : 0;
+    console.table({
+  Seminar: d.nama,
+  C1: c1,
+  C2: c2,
+  C3: c3,
+  C4: c4,
+  C5: c5,
+});
 
-    const w1 = bobot.bobot_harga / 100;
-const w2 = bobot.bobot_kuota / 100;
-const w3 = bobot.bobot_rating / 100;
-const w4 = bobot.bobot_level / 100;
-const w5 = bobot.bobot_fasilitas / 100;
+    const totalBobot =
+      bobot.bobot_harga +
+      bobot.bobot_kuota +
+      bobot.bobot_rating +
+      bobot.bobot_level +
+      bobot.bobot_fasilitas;
 
-const nilai =
-  c1 * w1 +
-  c2 * w2 +
-  c3 * w3 +
-  c4 * w4 +
-  c5 * w5;
+    const w1 = bobot.bobot_harga / totalBobot;
+    const w2 = bobot.bobot_kuota / totalBobot;
+    const w3 = bobot.bobot_rating / totalBobot;
+    const w4 = bobot.bobot_level / totalBobot;
+    const w5 = bobot.bobot_fasilitas / totalBobot;
+
+    const nilai =
+      c1 * w1 +
+      c2 * w2 +
+      c3 * w3 +
+      c4 * w4 +
+      c5 * w5;
+    console.table({
+  Seminar: d.nama,
+  Nilai: nilai,
+});
 
     return {
       seminarId: d.seminarId,
