@@ -1,7 +1,7 @@
-import { normalizeRole } from '../utils/role';
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import BrandLogo from "./BrandLogo";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -96,7 +96,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const userRole = normalizeRole(user?.role);
 
 
   const menus = user?.role === "ADMIN" ? adminMenus : userMenus;
@@ -108,17 +107,23 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div
+      className="admin-shell"
       style={{
         display: "flex",
         minHeight: "100vh",
-        fontFamily: "sans-serif",
+        fontFamily:
+          'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        background:
+          "linear-gradient(135deg, #fff7f8 0%, #f8fafc 46%, #fff1f3 100%)",
       }}
     >
       {/* Sidebar */}
       <div
+        className="admin-sidebar"
         style={{
           width: collapsed ? "64px" : "240px",
-          backgroundColor: "#8b1e2b",
+          background:
+            "linear-gradient(180deg, #7f1020 0%, #8b1e2b 46%, #2a1118 100%)",
           display: "flex",
           flexDirection: "column",
           transition: "width 0.3s",
@@ -128,6 +133,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           bottom: 0,
           overflow: "hidden",
           zIndex: 99,
+          boxShadow: "18px 0 45px rgba(139, 30, 43, 0.18)",
         }}
       >
         {/* Logo */}
@@ -137,29 +143,30 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             display: "flex",
             justifyContent: collapsed ? "center" : "space-between",
             alignItems: "center",
-            borderBottom: "1px solid rgba(255,255,255,.1)",
+            borderBottom: "1px solid rgba(255,255,255,.14)",
           }}
         >
           {!collapsed && (
             <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              <CalendarDays color="white" size={22} />
-              <span
+              <BrandLogo
+                width={166}
                 style={{
-                  color: "white",
-                  fontWeight: "bold",
-                  fontSize: "18px",
+                  borderRadius: "8px",
                 }}
-              >
-                SeminarKu
-              </span>
+              />
             </div>
           )}
 
           <button
             onClick={() => setCollapsed(!collapsed)}
             style={{
-              background: "none",
-              border: "none",
+              width: "34px",
+              height: "34px",
+              display: "grid",
+              placeItems: "center",
+              background: "rgba(255,255,255,.12)",
+              border: "1px solid rgba(255,255,255,.16)",
+              borderRadius: "8px",
               color: "white",
               cursor: "pointer",
             }}
@@ -176,7 +183,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               display: "flex",
               gap: "10px",
               alignItems: "center",
-              borderBottom: "1px solid rgba(255,255,255,.1)",
+              borderBottom: "1px solid rgba(255,255,255,.14)",
+              background: "rgba(255,255,255,.06)",
             }}
           >
             <div
@@ -188,6 +196,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,.18)",
               }}
             >
               <User color="white" size={18} />
@@ -209,6 +218,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   color: "#fca5a5",
                   fontSize: "12px",
                   marginTop: "2px",
+                  fontWeight: 700,
                 }}
               >
                 {user?.role}
@@ -218,7 +228,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         )}
 
         {/* Menu */}
-        <div style={{ flex: 1, padding: "10px" }}>
+        <div
+          className="admin-sidebar-menu"
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            overflowX: "hidden",
+            padding: "10px",
+          }}
+        >
           {menus.map((menu, index) => {
             const active = location.pathname === menu.path;
 
@@ -237,9 +256,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   borderRadius: "8px",
                   cursor: "pointer",
                   background: active
-                    ? "rgba(255,255,255,.18)"
+                    ? "rgba(255,255,255,.2)"
                     : "transparent",
                   color: "white",
+                  fontWeight: active ? 800 : 600,
+                  boxShadow: active
+                    ? "inset 0 1px 0 rgba(255,255,255,.2)"
+                    : "none",
+                  transition: "background .2s ease, transform .2s ease",
                 }}
               >
                 {menu.icon}
@@ -262,7 +286,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div
           style={{
             padding: "10px",
-            borderTop: "1px solid rgba(255,255,255,.1)",
+            borderTop: "1px solid rgba(255,255,255,.14)",
           }}
         >
           <button
@@ -273,11 +297,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               alignItems: "center",
               gap: "12px",
               padding: "12px",
-              background: "rgba(255,255,255,.1)",
+              background: "rgba(255,255,255,.12)",
               color: "white",
-              border: "none",
+              border: "1px solid rgba(255,255,255,.14)",
               borderRadius: "8px",
               cursor: "pointer",
+              fontWeight: 700,
             }}
           >
             <LogOut size={18} />
@@ -291,31 +316,50 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         style={{
           marginLeft: collapsed ? "64px" : "240px",
           flex: 1,
-          background: "#f5f5f5",
+          minHeight: "100vh",
+          background:
+            "radial-gradient(circle at top right, rgba(217,52,86,.12), transparent 34%), linear-gradient(135deg, #fff7f8 0%, #f8fafc 48%, #fff1f3 100%)",
+          transition: "margin-left 0.3s",
         }}
       >
         <div
+          className="admin-topbar"
           style={{
-            background: "white",
+            position: "sticky",
+            top: 0,
+            zIndex: 20,
+            background: "rgba(255,255,255,.9)",
             padding: "18px 30px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            boxShadow: "0 1px 5px rgba(0,0,0,.08)",
+            borderBottom: "1px solid rgba(139,30,43,.1)",
+            boxShadow: "0 14px 38px rgba(139,30,43,.08)",
+            backdropFilter: "blur(18px)",
           }}
         >
-          <h2 style={{ margin: 0 }}>
+          <h2 style={{ margin: 0, color: "#171923", fontWeight: 900 }}>
             {menus.find((m) => m.path === location.pathname)?.label ??
               "Dashboard"}
           </h2>
 
-          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "8px",
+              alignItems: "center",
+              color: "#8b1e2b",
+              fontWeight: 800,
+            }}
+          >
             <User size={16} />
             {user?.name}
           </div>
         </div>
 
-        <div style={{ padding: "30px" }}>{children}</div>
+        <div className="admin-content-surface" style={{ padding: "30px" }}>
+          {children}
+        </div>
       </div>
     </div>
   );

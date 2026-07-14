@@ -25,22 +25,26 @@ const metode = [
 ];
 
 const cardStyle = {
-  background: "white",
-  borderRadius: "12px",
-  padding: "22px",
-  boxShadow: "0 2px 10px rgba(0,0,0,.08)",
+  background: "linear-gradient(135deg, #ffffff 0%, #fffafa 100%)",
+  borderRadius: "8px",
+  padding: "24px",
+  border: "1px solid rgba(139,30,43,.09)",
+  boxShadow: "0 18px 42px rgba(139,30,43,.08)",
 };
 const thStyle = {
-  padding: "14px",
-  borderBottom: "2px solid #e5e7eb",
+  padding: "14px 16px",
+  borderBottom: "1px solid rgba(181,31,53,.12)",
   textAlign: "left" as const,
-  color: "#374151",
-  fontWeight: 700,
+  background: "#fff1f3",
+  color: "#8b1e2b",
+  fontWeight: 900,
+  fontSize: "12px",
+  textTransform: "uppercase" as const,
 };
 
 const tdStyle = {
-  padding: "14px",
-  borderBottom: "1px solid #f3f4f6",
+  padding: "14px 16px",
+  borderBottom: "1px solid rgba(139,30,43,.08)",
   color: "#4b5563",
 };
 
@@ -66,7 +70,12 @@ const fetchData = async () => {
 };
 
   return (
-    <div>
+    <div
+      style={{
+        display: "grid",
+        gap: "26px",
+      }}
+    >
 
       {/* Header */}
 
@@ -99,9 +108,9 @@ const fetchData = async () => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
+          gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))",
           gap: "20px",
-          marginBottom: "30px",
+          marginBottom: 0,
         }}
       >
         <div style={cardStyle}>
@@ -148,7 +157,7 @@ const fetchData = async () => {
       <div
         style={{
           ...cardStyle,
-          marginBottom: "30px",
+          marginBottom: 0,
         }}
       >
         <h2
@@ -224,9 +233,9 @@ const fetchData = async () => {
             <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3,1fr)",
-          gap: "20px",
-          marginBottom: "30px",
+          gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
+          gap: "24px",
+          marginBottom: 0,
         }}
       >
 
@@ -323,9 +332,6 @@ const fetchData = async () => {
       </tbody>
     </table>
   </div>
-
-</div>
-
 
         {/* Rating */}
 
@@ -468,6 +474,8 @@ const fetchData = async () => {
           </table>
         </div>
 
+      </div>
+
       
 
             {/* ===========================
@@ -477,7 +485,7 @@ const fetchData = async () => {
       <div
         style={{
           ...cardStyle,
-          marginBottom: "30px",
+          marginBottom: 0,
         }}
       >
         <h2
@@ -500,11 +508,11 @@ const fetchData = async () => {
           {metode.map((item) => (
             <div
               key={item.nama}
-              style={{
-                border: "1px solid #e5e7eb",
-                borderRadius: "10px",
+            style={{
+                border: "1px solid rgba(139,30,43,.1)",
+                borderRadius: "8px",
                 padding: "20px",
-                background: "#fafafa",
+                background: "#fff7f8",
               }}
             >
               <h3

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  CalendarDays,
   ChevronRight,
   LayoutDashboard,
   LogOut,
@@ -16,6 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import BrandLogo from '../../components/BrandLogo';
 import { normalizeRole } from '../../utils/role';
 import api from '../../services/api';
 
@@ -63,7 +63,7 @@ const superAdminMenus = [
   },
 ];
 
-const maroon = '#971b2d';
+const maroon = '#8b1e2b';
 const softPink = '#fff1f3';
 
 const emptyAdminForm: AdminForm = {
@@ -76,7 +76,8 @@ const styles: Record<string, CSSProperties> = {
   page: {
     display: 'flex',
     minHeight: '100vh',
-    backgroundColor: '#f9fafb',
+    background:
+      'radial-gradient(circle at top right, rgba(217,52,86,0.12), transparent 34%), linear-gradient(135deg, #fff7f8 0%, #f8fafc 48%, #fff1f3 100%)',
     fontFamily:
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     color: '#0f2238',
@@ -84,18 +85,19 @@ const styles: Record<string, CSSProperties> = {
   sidebar: {
     width: '240px',
     minHeight: '100vh',
-    backgroundColor: maroon,
+    background: 'linear-gradient(180deg, #7f1020 0%, #8b1e2b 46%, #2a1118 100%)',
     display: 'flex',
     flexDirection: 'column',
     flexShrink: 0,
     color: '#ffffff',
+    boxShadow: '18px 0 45px rgba(139, 30, 43, 0.18)',
   },
   brand: {
     padding: '20px 16px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    borderBottom: '1px solid rgba(255,255,255,0.14)',
     boxSizing: 'border-box',
   },
   brandTitle: {
@@ -107,19 +109,23 @@ const styles: Record<string, CSSProperties> = {
   },
   iconButton: {
     border: 'none',
-    background: 'transparent',
+    background: 'rgba(255,255,255,0.12)',
     color: '#ffffff',
     cursor: 'pointer',
     display: 'grid',
     placeItems: 'center',
+    width: 34,
+    height: 34,
     padding: 0,
+    borderRadius: 8,
   },
   profile: {
     padding: '16px',
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    borderBottom: '1px solid rgba(255,255,255,0.14)',
+    backgroundColor: 'rgba(255,255,255,0.06)',
   },
   avatar: {
     width: '36px',
@@ -129,6 +135,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'grid',
     placeItems: 'center',
     flexShrink: 0,
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
   },
   profileName: {
     fontSize: '13px',
@@ -168,13 +175,14 @@ const styles: Record<string, CSSProperties> = {
   navItemActive: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     fontWeight: 700,
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)',
   },
   navLabel: {
     flex: 1,
   },
   sidebarFooter: {
     padding: '12px 8px',
-    borderTop: '1px solid rgba(255,255,255,0.1)',
+    borderTop: '1px solid rgba(255,255,255,0.14)',
   },
   logoutButton: {
     width: '100%',
@@ -188,7 +196,7 @@ const styles: Record<string, CSSProperties> = {
     gap: '12px',
     padding: '10px 12px',
     fontSize: '13px',
-    fontWeight: 500,
+    fontWeight: 700,
   },
   main: {
     flex: 1,
@@ -201,18 +209,23 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    padding: '24px',
+    borderRadius: '8px',
+    background: 'linear-gradient(135deg, #7f1020 0%, #b51f35 100%)',
+    color: '#ffffff',
+    boxShadow: '0 18px 42px rgba(139, 30, 43, 0.14)',
   },
   title: {
     margin: '0 0 4px',
     fontSize: '24px',
     lineHeight: 1.15,
     fontWeight: 800,
-    color: '#0f2238',
+    color: '#ffffff',
   },
   subtitle: {
     margin: 0,
     fontSize: '14px',
-    color: '#667085',
+    color: 'rgba(255,255,255,0.84)',
   },
   primaryButton: {
     border: 'none',
@@ -235,11 +248,12 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     gap: '8px',
     backgroundColor: '#ffffff',
-    border: '1px solid #e4e7ec',
+    border: '1px solid rgba(181, 31, 53, 0.16)',
     borderRadius: '8px',
     padding: '10px 14px',
     maxWidth: '360px',
-    color: '#667085',
+    color: maroon,
+    boxShadow: '0 12px 28px rgba(139, 30, 43, 0.06)',
   },
   searchInput: {
     border: 'none',
@@ -250,8 +264,9 @@ const styles: Record<string, CSSProperties> = {
   },
   tableWrap: {
     backgroundColor: '#ffffff',
-    borderRadius: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+    borderRadius: '8px',
+    border: '1px solid rgba(139, 30, 43, 0.08)',
+    boxShadow: '0 18px 42px rgba(139, 30, 43, 0.08)',
     overflow: 'hidden',
   },
   table: {
@@ -267,11 +282,11 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 800,
     fontSize: '12px',
     textTransform: 'uppercase',
-    letterSpacing: '0.02em',
+    letterSpacing: 0,
   },
   td: {
     padding: '14px 20px',
-    borderBottom: '1px solid #f0f2f5',
+    borderBottom: '1px solid rgba(139, 30, 43, 0.08)',
     color: '#344054',
   },
   statusBadge: {
@@ -289,10 +304,10 @@ const styles: Record<string, CSSProperties> = {
     gap: '8px',
   },
   rowIconButton: {
-    border: '1px solid #e4e7ec',
+    border: '1px solid rgba(181, 31, 53, 0.16)',
     borderRadius: '6px',
     backgroundColor: '#ffffff',
-    color: '#475467',
+    color: maroon,
     cursor: 'pointer',
     display: 'grid',
     placeItems: 'center',
@@ -327,13 +342,14 @@ const styles: Record<string, CSSProperties> = {
     width: '100%',
     maxWidth: '460px',
     backgroundColor: '#ffffff',
-    borderRadius: '12px',
-    boxShadow: '0 24px 64px rgba(15, 23, 42, 0.22)',
+    borderRadius: '8px',
+    border: '1px solid rgba(139, 30, 43, 0.1)',
+    boxShadow: '0 28px 70px rgba(42, 17, 24, 0.22)',
     overflow: 'hidden',
   },
   modalHeader: {
     padding: '20px 24px',
-    borderBottom: '1px solid #f0f2f5',
+    borderBottom: '1px solid rgba(139, 30, 43, 0.08)',
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
@@ -558,12 +574,11 @@ const AdminList = () => {
   };
 
   return (
-    <div style={styles.page}>
+    <div className="super-admin-page" style={styles.page}>
       <aside style={styles.sidebar}>
         <div style={styles.brand}>
           <div style={styles.brandTitle}>
-            <CalendarDays size={22} />
-            <span>SeminarKu</span>
+            <BrandLogo width={166} style={{ borderRadius: '8px' }} />
           </div>
           <button type="button" aria-label="Tutup sidebar" style={styles.iconButton}>
             <X size={20} />
@@ -614,9 +629,18 @@ const AdminList = () => {
         <header style={styles.header}>
           <div>
             <h1 style={styles.title}>Kelola Admin</h1>
-            <p style={styles.subtitle}>Kelola akun admin yang mengelola SeminarKu.</p>
+            <p style={styles.subtitle}>Kelola akun admin yang mengelola aplikasi ini.</p>
           </div>
-          <button type="button" style={styles.primaryButton} onClick={handleOpenModal}>
+          <button
+            type="button"
+            style={{
+              ...styles.primaryButton,
+              backgroundColor: '#ffffff',
+              color: maroon,
+              boxShadow: '0 12px 28px rgba(42, 17, 24, 0.18)',
+            }}
+            onClick={handleOpenModal}
+          >
             <Plus size={16} />
             Tambah Admin
           </button>
@@ -708,7 +732,7 @@ const AdminList = () => {
               <div>
                 <h2 style={styles.modalTitle}>Tambah Admin</h2>
                 <p style={styles.modalSubtitle}>
-                  Buat akun admin baru untuk mengelola data SeminarKu.
+                  Buat akun admin baru untuk mengelola data aplikasi.
                 </p>
               </div>
               <button

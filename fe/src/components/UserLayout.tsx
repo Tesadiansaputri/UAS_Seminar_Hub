@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import BrandLogo from './BrandLogo';
 import {
-  CalendarDays,
   LogOut,
   LayoutDashboard,
   LayoutGrid,
@@ -38,7 +38,7 @@ const userMenus = [
   },
 ];
 
-const FONT_LINK_ID = 'seminarku-google-fonts';
+const FONT_LINK_ID = 'seminarhub-google-fonts';
 
 function useGoogleFonts() {
   useEffect(() => {
@@ -89,7 +89,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
             maxWidth: '1280px',
             margin: '0 auto',
             padding: '0 32px',
-            height: '72px',
+            minHeight: '88px',
 
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',
@@ -109,33 +109,10 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
                 cursor: 'pointer',
               }}
             >
-              <div
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 10,
-                  background: COLOR.primary,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <CalendarDays size={19} color="white" />
-              </div>
-
-              <span
-                style={{
-                  color: COLOR.primary,
-                  fontWeight: 700,
-                  fontSize: 20,
-                }}
-              >
-                SeminarKu
-              </span>
+              <BrandLogo width={116} style={{ borderRadius: 8 }} />
             </div>
           </div>
 

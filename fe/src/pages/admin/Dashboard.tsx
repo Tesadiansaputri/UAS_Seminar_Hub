@@ -18,20 +18,15 @@ interface Seminar {
   };
 }
 
-interface Stats {
-  totalSeminar: number;
-  totalSpeaker: number;
-  totalKategori: number;
-  totalPeserta: number;
-}
-
 const buttonStyle: CSSProperties = {
-  background: "#8b1e2b",
+  background: "linear-gradient(135deg, #8b1e2b 0%, #b51f35 100%)",
   color: "white",
   border: "none",
-  padding: "10px 18px",
+  padding: "11px 18px",
   borderRadius: "8px",
   cursor: "pointer",
+  fontWeight: 800,
+  boxShadow: "0 12px 24px rgba(139,30,43,.18)",
 };
 
 interface CardProps {
@@ -43,32 +38,75 @@ interface CardProps {
 const Card = ({ title, value, icon }: CardProps) => (
   <div
     style={{
-      background: "white",
-      padding: "20px",
-      borderRadius: "12px",
-      boxShadow: "0 2px 10px rgba(0,0,0,.05)",
+      position: "relative",
+      overflow: "hidden",
+      background:
+        "linear-gradient(135deg, #ffffff 0%, #fff7f8 100%)",
+      padding: "22px",
+      borderRadius: "8px",
+      border: "1px solid rgba(139,30,43,.1)",
+      boxShadow: "0 18px 42px rgba(139,30,43,.1)",
     }}
   >
     <div
       style={{
+        position: "absolute",
+        right: "-28px",
+        top: "-34px",
+        width: "110px",
+        height: "110px",
+        borderRadius: "50%",
+        background: "rgba(181,31,53,.09)",
+      }}
+    />
+    <div
+      style={{
+        position: "relative",
+        zIndex: 1,
         display: "flex",
         justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: "16px",
       }}
     >
       <div>
         <p
           style={{
             margin: 0,
-            color: "#666",
+            color: "#6b7280",
+            fontSize: "13px",
+            fontWeight: 800,
           }}
         >
           {title}
         </p>
 
-        <h2>{value}</h2>
+        <h2
+          style={{
+            margin: "12px 0 0",
+            color: "#171923",
+            fontSize: "32px",
+            lineHeight: 1,
+            fontWeight: 900,
+          }}
+        >
+          {value}
+        </h2>
       </div>
 
-      {icon}
+      <div
+        style={{
+          width: "48px",
+          height: "48px",
+          display: "grid",
+          placeItems: "center",
+          borderRadius: "8px",
+          background: "#fff1f3",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,.7)",
+        }}
+      >
+        {icon}
+      </div>
     </div>
   </div>
 );
@@ -148,6 +186,10 @@ const Dashboard = () => {
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: "30px",
+        padding: "26px",
+        borderRadius: "8px",
+        background: "linear-gradient(135deg, #7f1020 0%, #b51f35 100%)",
+        boxShadow: "0 18px 42px rgba(139,30,43,.16)",
       }}
     >
       <div>
@@ -156,6 +198,7 @@ const Dashboard = () => {
             margin: 0,
             fontSize: "30px",
             fontWeight: "bold",
+            color: "white",
           }}
         >
           Dashboard Admin
@@ -163,7 +206,7 @@ const Dashboard = () => {
 
         <p
           style={{
-            color: "#666",
+            color: "rgba(255,255,255,.84)",
             marginTop: "8px",
           }}
         >
@@ -174,12 +217,14 @@ const Dashboard = () => {
       <button
         onClick={() => navigate("/admin/seminar")}
         style={{
-          background: "#8b1e2b",
-          color: "white",
-          border: "none",
+          background: "white",
+          color: "#8b1e2b",
+          border: "1px solid rgba(255,255,255,.3)",
           padding: "12px 22px",
           borderRadius: "8px",
           cursor: "pointer",
+          fontWeight: 900,
+          boxShadow: "0 14px 30px rgba(42,17,24,.18)",
         }}
       >
         Kelola Seminar
@@ -190,7 +235,7 @@ const Dashboard = () => {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(4,1fr)",
+        gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))",
         gap: "20px",
         marginBottom: "35px",
       }}
@@ -209,10 +254,11 @@ const Dashboard = () => {
     <div
       style={{
         background: "white",
-        borderRadius: "12px",
-        padding: "20px",
+        borderRadius: "8px",
+        padding: "22px",
         marginBottom: "30px",
-        boxShadow: "0 2px 10px rgba(0,0,0,.05)",
+        border: "1px solid rgba(139,30,43,.08)",
+        boxShadow: "0 18px 42px rgba(139,30,43,.08)",
       }}
     >
       <h3>Quick Action</h3>
@@ -258,10 +304,11 @@ const Dashboard = () => {
     <div
       style={{
         background: "white",
-        borderRadius: "12px",
-        padding: "20px",
+        borderRadius: "8px",
+        padding: "22px",
         marginBottom: "30px",
-        boxShadow: "0 2px 10px rgba(0,0,0,.05)",
+        border: "1px solid rgba(139,30,43,.08)",
+        boxShadow: "0 18px 42px rgba(139,30,43,.08)",
       }}
     >
       <h3>Seminar Terbaru</h3>
@@ -301,9 +348,10 @@ const Dashboard = () => {
     <div
       style={{
         background: "white",
-        borderRadius: "12px",
-        padding: "20px",
-        boxShadow: "0 2px 10px rgba(0,0,0,.05)",
+        borderRadius: "8px",
+        padding: "22px",
+        border: "1px solid rgba(139,30,43,.08)",
+        boxShadow: "0 18px 42px rgba(139,30,43,.08)",
       }}
     >
       <h3>Statistik SPK</h3>

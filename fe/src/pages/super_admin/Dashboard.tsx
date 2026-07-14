@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import BrandLogo from '../../components/BrandLogo';
 import api from '../../services/api';
 
 type DashboardStats = {
@@ -47,7 +48,7 @@ const superAdminMenus = [
   },
 ];
 
-const maroon = '#971b2d';
+const maroon = '#8b1e2b';
 const softPink = '#fff1f3';
 const green = '#22c55e';
 
@@ -55,7 +56,8 @@ const styles: Record<string, CSSProperties> = {
   page: {
     display: 'flex',
     minHeight: '100vh',
-    backgroundColor: '#f9fafb',
+    background:
+      'radial-gradient(circle at top right, rgba(217,52,86,0.12), transparent 34%), linear-gradient(135deg, #fff7f8 0%, #f8fafc 48%, #fff1f3 100%)',
     fontFamily:
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     color: '#0f2238',
@@ -63,18 +65,19 @@ const styles: Record<string, CSSProperties> = {
   sidebar: {
     width: '240px',
     minHeight: '100vh',
-    backgroundColor: maroon,
+    background: 'linear-gradient(180deg, #7f1020 0%, #8b1e2b 46%, #2a1118 100%)',
     display: 'flex',
     flexDirection: 'column',
     flexShrink: 0,
     color: '#ffffff',
+    boxShadow: '18px 0 45px rgba(139, 30, 43, 0.18)',
   },
   brand: {
     padding: '20px 16px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    borderBottom: '1px solid rgba(255,255,255,0.14)',
     boxSizing: 'border-box',
   },
   brandTitle: {
@@ -86,19 +89,23 @@ const styles: Record<string, CSSProperties> = {
   },
   iconButton: {
     border: 'none',
-    background: 'transparent',
+    background: 'rgba(255,255,255,0.12)',
     color: '#ffffff',
     cursor: 'pointer',
     display: 'grid',
     placeItems: 'center',
+    width: 34,
+    height: 34,
     padding: 0,
+    borderRadius: 8,
   },
   profile: {
     padding: '16px',
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    borderBottom: '1px solid rgba(255,255,255,0.14)',
+    backgroundColor: 'rgba(255,255,255,0.06)',
   },
   avatar: {
     width: '36px',
@@ -108,6 +115,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'grid',
     placeItems: 'center',
     flexShrink: 0,
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
   },
   profileName: {
     fontSize: '13px',
@@ -147,13 +155,14 @@ const styles: Record<string, CSSProperties> = {
   navItemActive: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     fontWeight: 700,
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)',
   },
   navLabel: {
     flex: 1,
   },
   sidebarFooter: {
     padding: '12px 8px',
-    borderTop: '1px solid rgba(255,255,255,0.1)',
+    borderTop: '1px solid rgba(255,255,255,0.14)',
   },
   logoutButton: {
     width: '100%',
@@ -167,7 +176,7 @@ const styles: Record<string, CSSProperties> = {
     gap: '12px',
     padding: '10px 12px',
     fontSize: '13px',
-    fontWeight: 500,
+    fontWeight: 700,
   },
   main: {
     flex: 1,
@@ -177,19 +186,24 @@ const styles: Record<string, CSSProperties> = {
   },
   header: {
     marginBottom: '32px',
+    padding: '24px',
+    borderRadius: '8px',
+    background: 'linear-gradient(135deg, #7f1020 0%, #b51f35 100%)',
+    color: '#ffffff',
+    boxShadow: '0 18px 42px rgba(139, 30, 43, 0.14)',
   },
   title: {
     margin: '0 0 4px',
     fontSize: '24px',
     lineHeight: 1.15,
     fontWeight: 800,
-    color: '#0f2238',
+    color: '#ffffff',
     letterSpacing: 0,
   },
   subtitle: {
     margin: 0,
     fontSize: '14px',
-    color: '#667085',
+    color: 'rgba(255,255,255,0.84)',
   },
   cardGrid: {
     display: 'grid',
@@ -199,9 +213,10 @@ const styles: Record<string, CSSProperties> = {
   card: {
     minHeight: '188px',
     backgroundColor: '#ffffff',
-    borderRadius: '12px',
+    borderRadius: '8px',
+    border: '1px solid rgba(139, 30, 43, 0.08)',
     borderLeft: `4px solid ${maroon}`,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+    boxShadow: '0 18px 42px rgba(139, 30, 43, 0.08)',
     padding: '24px',
     boxSizing: 'border-box',
     display: 'flex',
@@ -217,7 +232,7 @@ const styles: Record<string, CSSProperties> = {
   cardIcon: {
     width: '44px',
     height: '44px',
-    borderRadius: '10px',
+    borderRadius: '8px',
     backgroundColor: softPink,
     color: maroon,
     display: 'grid',
@@ -229,7 +244,7 @@ const styles: Record<string, CSSProperties> = {
     fontSize: '28px',
     lineHeight: 1,
     fontWeight: 800,
-    color: '#0f2238',
+    color: '#171923',
     letterSpacing: 0,
   },
   label: {
@@ -237,12 +252,12 @@ const styles: Record<string, CSSProperties> = {
     fontSize: '13px',
     lineHeight: 1.2,
     fontWeight: 800,
-    color: '#192638',
+    color: '#1f2937',
   },
   desc: {
     margin: 0,
     fontSize: '12px',
-    color: '#98a2b3',
+    color: '#6b7280',
   },
   loading: {
     height: '360px',
@@ -320,12 +335,11 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={styles.page}>
+    <div className="super-admin-page" style={styles.page}>
       <aside style={styles.sidebar}>
         <div style={styles.brand}>
           <div style={styles.brandTitle}>
-            <CalendarDays size={22} />
-            <span>SeminarKu</span>
+            <BrandLogo width={166} style={{ borderRadius: '8px' }} />
           </div>
           <button type="button" aria-label="Tutup sidebar" style={styles.iconButton}>
             <X size={20} />
@@ -375,7 +389,7 @@ const Dashboard = () => {
       <main style={styles.main}>
         <header style={styles.header}>
           <h1 style={styles.title}>Selamat Datang, Admin!</h1>
-          <p style={styles.subtitle}>Berikut ringkasan data SeminarKu hari ini.</p>
+          <p style={styles.subtitle}>Berikut ringkasan data aplikasi hari ini.</p>
         </header>
 
         {loading ? (
