@@ -77,7 +77,7 @@ const userMenus = [
   {
     icon: <CalendarDays size={18} />,
     label: "Seminar",
-    path: "/seminars",
+    path: "/seminar",
   },
   {
     icon: <ScrollText size={18} />,

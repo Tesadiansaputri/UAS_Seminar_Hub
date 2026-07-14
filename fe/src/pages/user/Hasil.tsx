@@ -188,7 +188,7 @@ const Hasil = () => {
                   </div>
 
                   <button
-                    onClick={() => navigate("/seminars")}
+                    onClick={() => navigate("/seminar")}
                     className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#8b1e2b] px-5 font-extrabold text-white transition hover:bg-[#741622]"
                   >
                     Lihat Seminar

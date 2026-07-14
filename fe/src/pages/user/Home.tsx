@@ -58,7 +58,7 @@ const Home = () => {
 
   const getSeminar = async () => {
     try {
-      const res = await api.get("/seminars");
+      const res = await api.get("/seminar");
 
       setSeminars(res.data.slice(0, 3));
     } catch (err) {
@@ -140,7 +140,7 @@ const Home = () => {
           </div>
 
           <button
-            onClick={() => navigate("/seminars")}
+            onClick={() => navigate("/seminar")}
             className="inline-flex min-h-10 items-center gap-2 rounded-full border border-red-100 bg-red-50 px-5 text-sm font-extrabold text-[#b51f35] transition hover:bg-red-100"
           >
             Lihat Semua Seminar
@@ -207,7 +207,7 @@ const Home = () => {
                   </div>
 
                   <button
-                    onClick={() => navigate("/seminars")}
+                    onClick={() => navigate("/seminar")}
                     className="mt-6 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#8b1e2b] font-extrabold text-white transition hover:bg-[#741622]"
                   >
                     Lihat Detail
