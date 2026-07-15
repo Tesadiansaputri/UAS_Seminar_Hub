@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
-const BobotList = () => {
-  const [bobot, setBobot] = useState<any[]>([]);
+const RiwayatPerhitungan = () => {
+  const [hasil, setHasil] = useState<any[]>([]);
 
   useEffect(() => {
-    fetchBobot();
+    fetchRiwayat();
   }, []);
 
-  const fetchBobot = async () => {
+  const fetchRiwayat = async () => {
     try {
-      const res = await api.get("/bobot");
-      setBobot(res.data);
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+      const res = await api.get(`/hasil/user/${user.id}`);
+
+      setHasil(res.data);
     } catch (err) {
       console.log(err);
     }
@@ -19,7 +22,6 @@ const BobotList = () => {
 
   return (
     <div>
-
       <h1
         style={{
           fontSize: 28,
@@ -27,16 +29,16 @@ const BobotList = () => {
           marginBottom: 8,
         }}
       >
-        Kelola Bobot User
+        Riwayat Perhitungan
       </h1>
 
       <p
         style={{
           color: "#666",
-          marginBottom: 30,
+          marginBottom: 25,
         }}
       >
-        Bobot preferensi yang dipilih oleh setiap user
+        Riwayat hasil perhitungan seminar yang pernah Anda lakukan.
       </p>
 
       <table
@@ -48,7 +50,6 @@ const BobotList = () => {
           overflow: "hidden",
         }}
       >
-
         <thead
           style={{
             background: "#8b1e2b",
@@ -57,43 +58,31 @@ const BobotList = () => {
         >
           <tr>
             <th>No</th>
-            <th>User</th>
-            <th>Harga</th>
-            <th>Kuota</th>
-            <th>Rating</th>
-            <th>Level</th>
-            <th>Fasilitas</th>
+            <th>Metode</th>
+            <th>Seminar</th>
+            <th>Nilai</th>
+            <th>Ranking</th>
+            <th>Tanggal</th>
           </tr>
         </thead>
 
         <tbody>
-
-          {bobot.map((b, i) => (
-            <tr key={b.id}>
-
+          {hasil.map((h, i) => (
+            <tr key={h.id}>
               <td>{i + 1}</td>
-
-              <td>{b.user.name}</td>
-
-              <td>{b.bobot_harga}</td>
-
-              <td>{b.bobot_kuota}</td>
-
-              <td>{b.bobot_rating}</td>
-
-              <td>{b.bobot_level}</td>
-
-              <td>{b.bobot_fasilitas}</td>
-
+              <td>{h.metode}</td>
+              <td>{h.seminar.seminar_name}</td>
+              <td>{Number(h.nilai).toFixed(6)}</td>
+              <td>{h.ranking}</td>
+              <td>
+                {new Date(h.createdAt).toLocaleDateString("id-ID")}
+              </td>
             </tr>
           ))}
-
         </tbody>
-
       </table>
-
     </div>
   );
 };
 
-export default BobotList;
+export default RiwayatPerhitungan;

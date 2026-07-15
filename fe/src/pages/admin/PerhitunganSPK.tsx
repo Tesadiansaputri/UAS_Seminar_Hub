@@ -436,7 +436,7 @@ const fetchData = async () => {
               color: "#1f2937",
             }}
           >
-            🏢 Fasilitas
+            Fasilitas
           </h3>
 
           <table

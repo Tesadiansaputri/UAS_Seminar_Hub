@@ -249,18 +249,13 @@ export const calculateHasil = async (
         break;
 
       default:
-
-      
         return res.status(400).json({
           error: "Metode harus SAW, WP, atau TOPSIS.",
         });
 
     }
 
-    // ===========================
     // Hapus hasil lama
-    // ===========================
-
     await prisma.hasil.deleteMany({
       where: {
         userId: Number(userId),
@@ -268,10 +263,7 @@ export const calculateHasil = async (
       },
     });
 
-    // ===========================
     // Simpan hasil baru
-    // ===========================
-
     await prisma.hasil.createMany({
       data: hasil.map((item) => ({
         userId: Number(userId),
@@ -282,10 +274,7 @@ export const calculateHasil = async (
       })),
     });
 
-    // ===========================
     // Ambil hasil lengkap
-    // ===========================
-
     const data = await prisma.hasil.findMany({
       where: {
         userId: Number(userId),
@@ -313,6 +302,45 @@ export const calculateHasil = async (
 
     res.status(500).json({
       error: error.message,
+    });
+
+  }
+};
+
+// ==============================
+// GET RIWAYAT HASIL BY USER
+// ==============================
+export const getHasilByUser = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const { userId } = req.params;
+
+    const hasil = await prisma.hasil.findMany({
+      where: {
+        userId: Number(userId),
+      },
+      include: {
+        seminar: {
+          include: {
+            category: true,
+            level: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json(hasil);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: "Gagal mengambil riwayat user",
     });
 
   }

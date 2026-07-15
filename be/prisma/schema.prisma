@@ -161,11 +161,12 @@ model Hasil {
 }
 
 model Kriteria {
-  id     Int    @id @default(autoincrement())
-  kode   String @unique
-  nama   String
-  jenis  String
-  sumber String
+  id           Int     @id @default(autoincrement())
+  kode         String
+  nama         String
+  jenis        String
+  sumber       String
 
-  @@map("kriteria")
+  bobot        Float?
+  kepentingan  Int?
 }

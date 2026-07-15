@@ -94,6 +94,7 @@ const Card = ({ title, value, icon }: CardProps) => (
         </h2>
       </div>
 
+
       <div
         style={{
           width: "48px",

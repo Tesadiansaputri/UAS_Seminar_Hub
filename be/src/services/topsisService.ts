@@ -1,4 +1,5 @@
 import { prisma } from "../lib/db.js";
+import { getSkor } from "./sawService.js";
 
 export async function hitungTOPSIS(userId: number) {
 
@@ -36,35 +37,43 @@ export async function hitungTOPSIS(userId: number) {
   // Matriks Keputusan
   // ===========================
 
-  const data = seminar.map((s) => {
+  const data = [];
 
-    const rating =
-      s.speakers.length > 0
-        ? s.speakers.reduce(
-            (a, b) => a + b.speaker.rating,
-            0
-          ) / s.speakers.length
-        : 0;
+for (const s of seminar) {
 
-    return {
+  const rating =
+    s.speakers.length > 0
+      ? s.speakers.reduce(
+          (total, sp) => total + (sp.speaker?.rating ?? 0),
+          0
+        ) / s.speakers.length
+      : 0;
 
-      seminarId: s.id,
+  const totalFasilitas = s.fasilitas.reduce(
+    (total, f) => total + (f.fasilitas?.nilai_fasilitas ?? 0),
+    0
+  );
 
-      nama: s.seminar_name,
+  let kategoriFasilitas = 1;
 
-      harga: Number(s.harga),
+  if (totalFasilitas >= 9) kategoriFasilitas = 5;
+  else if (totalFasilitas >= 7) kategoriFasilitas = 4;
+  else if (totalFasilitas >= 5) kategoriFasilitas = 3;
+  else if (totalFasilitas >= 3) kategoriFasilitas = 2;
 
-      kuota: s.kuota_tersedia,
-
-      rating,
-
-      level: s.level.nilai_level,
-
-      fasilitas: s.fasilitas.length,
-
-    };
-
+  data.push({
+    seminarId: s.id,
+    nama: s.seminar_name,
+    harga: await getSkor("Harga", Number(s.harga)),
+    kuota: await getSkor("Kuota", s.kuota_tersedia),
+    rating: await getSkor("Rating", rating),
+    level: await getSkor("Level", s.level.nama_level),
+    fasilitas: await getSkor("Fasilitas", kategoriFasilitas),
   });
+}
+
+console.log("=== DATA TOPSIS ===");
+console.table(data);
     // ===========================
   // Pembagi Normalisasi
   // ===========================
@@ -89,6 +98,14 @@ export async function hitungTOPSIS(userId: number) {
     data.reduce((sum, x) => sum + Math.pow(x.fasilitas, 2), 0)
   );
 
+  console.log("=== PEMBAGI ===");
+console.log({
+  pembagiHarga,
+  pembagiKuota,
+  pembagiRating,
+  pembagiLevel,
+  pembagiFasilitas,
+});
   // ===========================
   // Matriks Normalisasi (R)
   // ===========================
@@ -110,23 +127,27 @@ export async function hitungTOPSIS(userId: number) {
     fasilitas: x.fasilitas / pembagiFasilitas,
 
   }));
+
+  console.log("=== NORMALISASI ===");
+console.table(normalisasi);
     // ===========================
   // Bobot
   // ===========================
 
-  const totalBobot =
+  const total =
     bobot.bobot_harga +
     bobot.bobot_kuota +
     bobot.bobot_rating +
     bobot.bobot_level +
     bobot.bobot_fasilitas;
 
-  const wHarga = bobot.bobot_harga / totalBobot;
-  const wKuota = bobot.bobot_kuota / totalBobot;
-  const wRating = bobot.bobot_rating / totalBobot;
-  const wLevel = bobot.bobot_level / totalBobot;
-  const wFasilitas = bobot.bobot_fasilitas / totalBobot;
+  const safeTotal = total || 1;
 
+  const wHarga = bobot.bobot_harga / safeTotal;
+  const wKuota = bobot.bobot_kuota / safeTotal;
+  const wRating = bobot.bobot_rating / safeTotal;
+  const wLevel = bobot.bobot_level / safeTotal;
+  const wFasilitas = bobot.bobot_fasilitas / safeTotal;
   // ===========================
   // Matriks Normalisasi Berbobot (Y)
   // ===========================
@@ -148,6 +169,9 @@ export async function hitungTOPSIS(userId: number) {
     fasilitas: x.fasilitas * wFasilitas,
 
   }));
+
+  console.log("=== TERBOBOT ===");
+console.table(terbobot);
     // ===========================
   // Solusi Ideal Positif (A+)
   // ===========================
@@ -187,6 +211,12 @@ export async function hitungTOPSIS(userId: number) {
     fasilitas: Math.min(...terbobot.map((x) => x.fasilitas)),
 
   };
+
+  console.log("=== A+ ===");
+console.table(idealPositif);
+
+console.log("=== A- ===");
+console.table(idealNegatif);
     // ===========================
   // Hitung Jarak ke A+ dan A-
   // ===========================
@@ -214,6 +244,13 @@ export async function hitungTOPSIS(userId: number) {
     );
 
     const nilai = dMinus / (dPlus + dMinus);
+
+    console.log({
+  seminar: x.nama,
+  dPlus,
+  dMinus,
+  nilai,
+});
 
     return {
 

@@ -6,6 +6,7 @@ import {
   updateHasilById,
   deleteHasilById,
   calculateHasil,
+  getHasilByUser
 } from "../controllers/hasilController.js";
 
 const router = Router();
@@ -25,5 +26,6 @@ router.post("/", createHasil);
 router.put("/:id", updateHasilById);
 
 router.delete("/:id", deleteHasilById);
+router.get("/user/:userId", getHasilByUser);
 
 export default router;

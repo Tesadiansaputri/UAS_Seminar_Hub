@@ -56,8 +56,8 @@ const adminMenus = [
     icon: <Settings size={18} />,
 },
 {
-    label: "Kelola Bobot",
-    path: "/admin/bobot",
+    label: "Riwayat Perhitungan",
+    path: "/admin/hasil",
     icon: <Scale size={18} />,
 },
   

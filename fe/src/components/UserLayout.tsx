@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   LayoutGrid,
   User,
+  History,
 } from 'lucide-react';
 
 const COLOR = {
@@ -36,6 +37,12 @@ const userMenus = [
     label: 'Profil',
     path: '/profile',
   },
+
+  {
+  label: "Riwayat",
+  path: "/user/riwayat",
+  icon: <History size={20} />,
+},
 ];
 
 const FONT_LINK_ID = 'seminarhub-google-fonts';

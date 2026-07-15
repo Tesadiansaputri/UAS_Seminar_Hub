@@ -17,6 +17,7 @@ import UserSeminarList from "./pages/user/SeminarList";
 import Profile from "./pages/user/Profile";
 import Recommendation from "./pages/user/Recommendation";
 import Hasil from "./pages/user/Hasil";
+import RiwayatPerhitungan from "./pages/user/RiwayatPerhitungan";
 
 
 
@@ -40,7 +41,7 @@ import AdminList from "./pages/super_admin/AdminList";
 import UserList from "./pages/super_admin/UserList";
 import LevelList from "./pages/admin/LevelList";
 import FasilitasList from "./pages/admin/FasilitasList";
-import BobotList from "./pages/admin/BobotList";
+import BobotList from "./pages/admin/RiwayatPerhitungan";
 import PerhitunganSPK from "./pages/admin/PerhitunganSPK";
 
 
@@ -129,6 +130,11 @@ function App() {
             }
           />  
 
+          <Route
+  path="/user/riwayat"
+  element={<RiwayatPerhitungan />}
+/>
+
           {/* ================= ADMIN ================= */}
 
 <Route
@@ -207,7 +213,7 @@ function App() {
   }
 />
 <Route
-  path="/admin/bobot"
+  path="/admin/hasil"
   element={
     <ProtectedRoute role="ADMIN">
       <Layout>
