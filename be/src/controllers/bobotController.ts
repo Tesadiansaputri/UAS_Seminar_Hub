@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/db.js";
 
-// ==============================
 // GET ALL BOBOT
-// ==============================
+
 export const getAllBobot = async (req: Request, res: Response) => {
   try {
     const bobot = await prisma.bobot.findMany({
@@ -23,9 +22,9 @@ export const getAllBobot = async (req: Request, res: Response) => {
   }
 };
 
-// ==============================
+
 // GET BOBOT BY ID
-// ==============================
+
 export const getBobotById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

@@ -84,9 +84,9 @@ export const getHasilById = async (
 
   }
 };
-// ==============================
+
 // CREATE HASIL (MANUAL)
-// ==============================
+
 export const createHasil = async (
   req: Request,
   res: Response
@@ -123,9 +123,9 @@ export const createHasil = async (
 };
 
 
-// ==============================
+
 // UPDATE HASIL
-// ==============================
+
 export const updateHasilById = async (
   req: Request,
   res: Response
@@ -179,9 +179,9 @@ export const updateHasilById = async (
 
   }
 };
-// ==============================
+
 // DELETE HASIL
-// ==============================
+
 export const deleteHasilById = async (
   req: Request,
   res: Response
@@ -220,9 +220,9 @@ export const deleteHasilById = async (
 
   }
 };
-// ==============================
+
 // HITUNG SPK (SAW / WP / TOPSIS)
-// ==============================
+
 export const calculateHasil = async (
   req: Request,
   res: Response
@@ -307,9 +307,9 @@ export const calculateHasil = async (
   }
 };
 
-// ==============================
+
 // GET RIWAYAT HASIL BY USER
-// ==============================
+
 export const getHasilByUser = async (
   req: Request,
   res: Response

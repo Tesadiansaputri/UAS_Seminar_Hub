@@ -7,7 +7,7 @@ import {
   Target, FileText, ScrollText,
   CalendarDays, Users, Mic, LayoutGrid,
   ArrowRight, Star, Sparkles, UserRound,
-  LogIn, UserPlus, Award, MapPin, Loader2
+  CircleUserRound, UserPlus, Award, MapPin, Loader2
 } from 'lucide-react';
 
 interface Seminar {
@@ -44,7 +44,7 @@ const fallbackCategories = [
 ];
 
 const featureItems = [
-  { icon: Target, title: 'Pilih Kategori', desc: 'Temukan seminar & workshop sesuai minatmu dari berbagai kategori.' },
+  { icon: Target, title: 'Pilih Kategori', desc: 'Temukan seminar sesuai minatmu dari berbagai kategori.' },
   { icon: FileText, title: 'Daftar Mudah', desc: 'Proses pendaftaran cepat dan mudah hanya dalam beberapa klik.' },
   { icon: Mic, title: 'Speaker Terbaik', desc: 'Narasumber ahli dan berpengalaman untuk rekomendasi SAW terbaik.' },
   { icon: ScrollText, title: 'Dapat Sertifikat', desc: 'Dapatkan sertifikat resmi setelah mengikuti event.' },
@@ -129,7 +129,7 @@ const LandingPage = () => {
 
         <div style={styles.navActions}>
           <button onClick={() => navigate('/login')} style={styles.loginButton}>
-            <LogIn size={15} />
+            <CircleUserRound size={16} />
             Login
           </button>
           <button onClick={() => navigate('/register')} style={styles.registerButton}>
@@ -147,7 +147,7 @@ const LandingPage = () => {
         <div style={styles.heroContent}>
           <div style={styles.badge}>
             <Sparkles size={14} />
-            Platform Seminar & Workshop
+            Platform Seminar Terbaik
             <Sparkles size={14} />
           </div>
 
@@ -158,7 +158,7 @@ const LandingPage = () => {
           </h1>
 
           <p style={styles.heroText}>
-            Temukan ribuan seminar & workshop berkualitas dengan narasumber
+            Temukan ribuan seminar berkualitas dengan narasumber
             berpengalaman untuk masa depanmu.
           </p>
 
@@ -320,7 +320,7 @@ const LandingPage = () => {
           <BrandLogo width={154} style={{ borderRadius: 8 }} />
         </div>
         <p style={styles.footerText}>
-          Platform seminar & workshop terbaik untuk pengembangan diri
+          Platform seminar terbaik untuk pengembangan diri
         </p>
         <span style={styles.copyright}>
           © 2026. All rights reserved.

@@ -4,10 +4,13 @@ import { getSkor } from "./sawService.js";
 export async function hitungTOPSIS(userId: number) {
 
   const bobot = await prisma.bobot.findFirst({
-    where: {
-      userId,
-    },
-  });
+  where:{
+    userId,
+  },
+  orderBy:{
+    createdAt:"desc",
+  },
+});
 
   if (!bobot) {
     throw new Error("Bobot belum diinput.");

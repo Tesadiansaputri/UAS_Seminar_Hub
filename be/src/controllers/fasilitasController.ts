@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/db.js";
 
-// ==============================
+
 // GET ALL FASILITAS
-// ==============================
+
 export const getAllFasilitas = async (req: Request, res: Response) => {
   try {
     const fasilitas = await prisma.fasilitas.findMany({
@@ -27,9 +27,9 @@ export const getAllFasilitas = async (req: Request, res: Response) => {
   }
 };
 
-// ==============================
+
 // GET FASILITAS BY ID
-// ==============================
+
 export const getFasilitasById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
