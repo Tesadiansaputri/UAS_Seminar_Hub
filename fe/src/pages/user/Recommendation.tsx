@@ -26,6 +26,15 @@ interface Preference {
   bobot: number;
 }
 
+interface SubKriteria {
+  id: number;
+  jenis: string;
+  nama: string;
+  nilai: number;
+  min: number | null;
+  max: number | null;
+}
+
 const metodeList: Metode[] = ["SAW", "WP", "TOPSIS"];
 
 const bobotList = [
@@ -39,11 +48,9 @@ export default function Recommendation() {
   const [metode, setMetode] = useState<Metode>("SAW");
   const [kriteria, setKriteria] = useState<Kriteria[]>([]);
   const [preferences, setPreferences] = useState<Preference[]>([]);
-
-  useEffect(() => {
-    getKriteria();
-  }, []);
-
+const [subKriteria, setSubKriteria] = useState<SubKriteria[]>([]);
+const [selectedSub, setSelectedSub] = useState<Record<number, number>>({});
+  
   const getKriteria = async () => {
     try {
       const res = await api.get("/kriteria");
@@ -60,6 +67,21 @@ export default function Recommendation() {
       console.log(err);
     }
   };
+
+  const getSubKriteria = async () => {
+  try {
+    const res = await api.get("/sub-kriteria");
+    setSubKriteria(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+useEffect(() => {
+    getKriteria();
+    getSubKriteria();
+  }, []);
+
 
   const handleBobot = (index: number, value: number) => {
     const data = [...preferences];
@@ -303,6 +325,41 @@ export default function Recommendation() {
                     {preferences[index]?.bobot ?? 0}%
                   </span>
                 </div>
+
+                
+                <label className="font-bold text-gray-800">
+  Sub Kriteria
+</label>
+
+<select
+  value={selectedSub[item.id] || ""}
+  onChange={(e) =>
+    setSelectedSub({
+      ...selectedSub,
+      [item.id]: Number(e.target.value),
+    })
+  }
+  className="mt-2 mb-4 min-h-12 w-full rounded-lg border border-gray-200 bg-white px-4"
+>
+  <option value="">Pilih Sub Kriteria</option>
+
+  {subKriteria
+    .filter((sub) => {
+      if (item.nama === "Harga") return sub.jenis === "Harga";
+      if (item.nama === "Kuota") return sub.jenis === "Kuota";
+      if (item.nama === "Rating Pembicara") return sub.jenis === "Rating";
+      if (item.nama === "Level Seminar") return sub.jenis === "Level";
+      if (item.nama === "Fasilitas") return sub.jenis === "Fasilitas";
+      return false;
+    })
+    .map((sub) => (
+      <option key={sub.id} value={sub.id}>
+        {sub.nama}
+      </option>
+    ))}
+</select>
+
+
 
                 <label className="font-bold text-gray-800">
                   Bobot Kepentingan
